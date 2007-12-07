@@ -12,7 +12,6 @@ flag new-base {
 
 library {
 Exposed-Modules: RSS.Syntax, RSS.Import, RSS.Export, RSS1.Syntax, RSS1.Import, RSS1.Utils, RSS1.Export, DublinCore.Types, Atom.Feed, Atom.Feed.Import, Atom.Feed.Export, Atom.Feed.Link
--- Cheating here, including the tests/ .cabal + files in the parent (so as to dist them as one.)
 Ghc-Options:     -Wall -O2
 Build-Depends:   base, xml >= 1.1
 }
