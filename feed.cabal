@@ -1,0 +1,29 @@
+Name:            feed
+Version:         0.1.0
+License:         BSD3
+Description:     Interfacing with RSS (v 0.9x, 2.x, 1.0) + Atom feeds.
+Extra-Source-Files:    tests/Main.hs tests/Setup.hs tests/rss-tests.cabal
+Cabal-version:   >= 1.2
+
+flag new-base {
+  description: Build with new smaller base library
+  default: False
+}
+
+library {
+Exposed-Modules: RSS.Syntax, RSS.Import, RSS.Export, RSS1.Syntax, RSS1.Import, RSS1.Utils, RSS1.Export, DublinCore.Types, Atom.Feed, Atom.Feed.Import, Atom.Feed.Export, Atom.Feed.Link
+-- Cheating here, including the tests/ .cabal + files in the parent (so as to dist them as one.)
+Ghc-Options:     -Wall -O2
+Build-Depends:   base, xml >= 1.1
+}
+
+executable feed-test {
+  build-depends:        base, xml >= 1.1
+  if flag(new-base) {
+    build-depends: base >= 3, containers, old-time, old-locale, filepath
+  } else {
+    build-depends: base < 3
+  }
+  main-is:              tests/Main.hs
+  ghc-options:          -Wall -fglasgow-exts
+}

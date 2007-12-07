@@ -1,0 +1,32 @@
+name: feed
+version: 0.1.0
+license: BSD3
+copyright:
+maintainer:
+stability:
+homepage:
+package-url:
+description: Interfacing with RSS (v 0.9x, 2.x, 1.0) feeds.
+category:
+author:
+exposed: True
+exposed-modules: RSS.Syntax RSS.Import RSS.Export RSS1.Syntax
+                 RSS1.Import RSS1.Utils RSS1.Export DublinCore.Types Atom.Feed
+                 Atom.Feed.Import Atom.Feed.Export Atom.Feed.Link
+hidden-modules:
+import-dirs: /home/sof/lib/packages/lib/feed-0.1.0/ghc-6.8.1
+library-dirs: /home/sof/lib/packages/lib/feed-0.1.0/ghc-6.8.1
+hs-libraries: HSfeed-0.1.0
+extra-libraries:
+extra-ghci-libraries:
+include-dirs:
+includes:
+depends: base-3.0.0.0 xml-1.1.4 base-3.0.0.0 containers-0.1.0.0
+         old-time-1.0.0.0 old-locale-1.0.0.0 filepath-1.1.0.0
+hugs-options:
+cc-options:
+ld-options:
+framework-dirs:
+frameworks:
+haddock-interfaces: /home/sof/lib/packages/share/doc/feed-0.1.0/html/feed.haddock
+haddock-html: /home/sof/lib/packages/share/doc/feed-0.1.0/html
