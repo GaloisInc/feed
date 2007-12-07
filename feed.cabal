@@ -11,7 +11,7 @@ flag new-base {
 }
 
 library {
-Exposed-Modules: RSS.Syntax, RSS.Import, RSS.Export, RSS1.Syntax, RSS1.Import, RSS1.Utils, RSS1.Export, DublinCore.Types, Atom.Feed, Atom.Feed.Import, Atom.Feed.Export, Atom.Feed.Link, Feed.Import, Feed.Types, Feed.Export
+Exposed-Modules: RSS.Syntax, RSS.Import, RSS.Export, RSS1.Syntax, RSS1.Import, RSS1.Utils, RSS1.Export, DublinCore.Types, Atom.Feed, Atom.Feed.Import, Atom.Feed.Export, Atom.Feed.Link, Feed.Import, Feed.Types, Feed.Export, Feed.Query
 Ghc-Options:     -Wall -O2
 Build-Depends:   base, xml >= 1.1
 }
