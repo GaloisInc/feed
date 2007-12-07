@@ -16,7 +16,7 @@ import Data.List ( concatMap )
 -- be registered with IANA if they have wider applicability,
 -- and the 'LinkRelation' data type encodes the currently
 -- registered link types (derived from: 
---  http://www.iana.org/assignments/link-relations.html
+--  http:\/\/www.iana.org\/assignments\/link-relations.html
 -- on 2007-10-28]
 --
 data LinkRelation               -- relevant RFC:
