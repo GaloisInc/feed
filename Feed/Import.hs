@@ -1,6 +1,6 @@
 module Feed.Import 
-        ( parseFeedFromFile -- :: FilePath -> IO (Maybe Feed)
-	, parseFeedString   -- :: String -> IO (Maybe Feed)
+        ( parseFeedFromFile -- :: FilePath -> IO Feed
+	, parseFeedString   -- :: String -> IO Feed
 	) where
 
 import Atom.Feed.Import as Atom
