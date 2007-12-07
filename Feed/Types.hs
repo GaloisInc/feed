@@ -10,3 +10,8 @@ data Feed
  | RSSFeed  RSS.RSS
  | RSS1Feed RSS1.Feed
  
+data Item
+ = AtomItem Atom.Entry
+ | RSSItem  RSS.RSSItem
+ | RSS1Item RSS1.Item
+ 
