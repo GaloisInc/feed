@@ -21,4 +21,8 @@ itemCategories it =
   case it of
     Feed.AtomItem i -> map Atom.catTerm $ Atom.entryCategories i
     Feed.RSSItem i  -> map RSS.rssCategoryValue $ RSS.rssItemCategories i
-    Feed.RSS1Item i -> concat $ map (words.dcText) $ filter (\ dc -> dcElt dc == DC_Subject) $ RSS1.itemDC i
+    Feed.RSS1Item i -> concat $ getCats1 i
+ where
+    -- get RSS1 categories; either via DublinCore's subject (or taxonomy topics...not yet.)
+   getCats1 i1 = 
+     map (words.dcText) $ filter (\ dc -> dcElt dc == DC_Subject) $ RSS1.itemDC i1
