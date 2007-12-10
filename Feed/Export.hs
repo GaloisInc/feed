@@ -14,3 +14,5 @@ xmlFeed fe =
    AtomFeed f -> Atom.xmlFeed f
    RSSFeed  f -> RSS.xmlRSS f
    RSS1Feed f -> RSS1.xmlFeed f
+   XMLFeed e  -> e -- that was easy!
+
