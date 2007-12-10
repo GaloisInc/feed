@@ -21,7 +21,7 @@ parseFeedString str = do
     Nothing -> fail "parseFeedString: not a well-formed XML content"
     Just e  -> 
       case readAtom e `mplus` readRSS1 e `mplus` readRSS2 e of
-        Nothing -> fail "parseFeedString: not well-formed RSS input"
+        Nothing -> return (XMLFeed e)
 	Just f  -> return f
     
    
