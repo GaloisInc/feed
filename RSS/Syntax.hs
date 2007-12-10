@@ -11,7 +11,7 @@ data RSS
      , rssChannel :: RSSChannel
      , rssOther   :: [XML.Element]
      }
-
+     
 type URLString = String
 type DateString = String
 
@@ -117,5 +117,126 @@ data RSSTextInput
      , rssTextInputOther :: [XML.Element]
      }
 
+-- default constructors:
+nullRSS :: String -> URLString -> RSS
+nullRSS title link = 
+  RSS 
+    { rssVersion = "2.0"
+    , rssAttrs   = []
+    , rssChannel = nullChannel title link
+    , rssOther   = []
+    }
 
-     
+nullChannel :: String -> URLString -> RSSChannel
+nullChannel title link = 
+  RSSChannel
+     { rssTitle        = title
+     , rssLink         = link
+     , rssDescription  = title
+     , rssItems        = []
+     , rssLanguage     = Nothing
+     , rssCopyright    = Nothing
+     , rssEditor       = Nothing
+     , rssWebMaster    = Nothing
+     , rssPubDate      = Nothing
+     , rssLastUpdate   = Nothing
+     , rssCategories   = []
+     , rssGenerator    = Nothing
+     , rssDocs         = Nothing
+     , rssCloud        = Nothing
+     , rssTTL          = Nothing
+     , rssImage        = Nothing
+     , rssRating       = Nothing
+     , rssTextInput    = Nothing
+     , rssSkipHours    = Nothing
+     , rssSkipDays     = Nothing
+     , rssChannelOther = []
+     }
+
+nullItem :: String -> RSSItem
+nullItem title = 
+   RSSItem
+     { rssItemTitle        = Just title
+     , rssItemLink         = Nothing
+     , rssItemDescription  = Nothing
+     , rssItemAuthor       = Nothing
+     , rssItemCategories   = []
+     , rssItemComments     = Nothing
+     , rssItemEnclosure    = Nothing
+     , rssItemGuid         = Nothing
+     , rssItemPubDate      = Nothing
+     , rssItemSource       = Nothing
+     , rssItemAttrs        = []
+     , rssItemOther        = []
+     }
+
+nullSource :: URLString -> String -> RSSSource
+nullSource url title = 
+  RSSSource
+     { rssSourceURL    = url
+     , rssSourceAttrs  = []
+     , rssSourceTitle  = title
+     }
+
+nullEnclosure :: URLString -> Integer -> String -> RSSEnclosure
+nullEnclosure url len ty = 
+  RSSEnclosure
+     { rssEnclosureURL     = url
+     , rssEnclosureLength  = len
+     , rssEnclosureType    = ty
+     , rssEnclosureAttrs   = []
+     }
+
+nullCategory :: String -> RSSCategory
+nullCategory nm = 
+  RSSCategory
+     { rssCategoryDomain   = Nothing
+     , rssCategoryAttrs    = []
+     , rssCategoryValue    = nm
+     }
+
+nullGuid :: String -> RSSGuid
+nullGuid v = 
+  RSSGuid
+     { rssGuidPermanentURL = Nothing
+     , rssGuidAttrs        = []
+     , rssGuidValue        = v
+     }
+
+nullPermaGuid :: String -> RSSGuid
+nullPermaGuid v = (nullGuid v){rssGuidPermanentURL=Just True}
+
+nullImage :: URLString -> String -> URLString -> RSSImage
+nullImage url title link = 
+  RSSImage
+     { rssImageURL     = url
+     , rssImageTitle   = title
+     , rssImageLink    = link
+     , rssImageWidth   = Nothing
+     , rssImageHeight  = Nothing
+     , rssImageDesc    = Nothing
+     , rssImageOther   = []
+     }
+
+nullCloud :: RSSCloud
+nullCloud = 
+  RSSCloud
+     { rssCloudDomain   = Nothing
+     , rssCloudPort     = Nothing
+     , rssCloudPath     = Nothing
+     , rssCloudRegister = Nothing
+     , rssCloudProtocol = Nothing
+     , rssCloudAttrs    = []
+     }
+
+nullTextInput :: String -> String -> URLString -> RSSTextInput
+nullTextInput title nm link = 
+  RSSTextInput
+     { rssTextInputTitle = title
+     , rssTextInputDesc  = title
+     , rssTextInputName  = nm
+     , rssTextInputLink  = link
+     , rssTextInputAttrs = []
+     , rssTextInputOther = []
+     }
+

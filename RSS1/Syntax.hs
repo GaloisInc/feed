@@ -103,3 +103,96 @@ data ContentInfo
 	, contentValue    :: Maybe String -- should be: RDFValue
 	}
 
+--default constructors:
+nullFeed :: URIString -> TitleString -> Feed
+nullFeed uri title = 
+   Feed { feedVersion   = "1.0"
+        , feedChannel   = nullChannel uri title
+	, feedImage     = Nothing
+	, feedItems     = []
+	, feedTextInput = Nothing
+	, feedTopics    = []
+	, feedOther     = []
+	, feedAttrs     = []
+        }
+
+nullChannel :: URIString -> TitleString -> Channel
+nullChannel uri title = 
+   Channel
+        { channelURI          = uri
+	, channelTitle        = title
+	, channelLink         = uri
+	, channelDesc         = title
+	, channelImageURI     = Nothing
+	, channelItemURIs     = []
+	, channelTextInputURI = Nothing
+	, channelDC           = []
+	, channelUpdatePeriod = Nothing
+	, channelUpdateFreq   = Nothing
+	, channelUpdateBase   = Nothing
+	, channelContent      = []
+	, channelTopics       = []
+	, channelOther        = []
+	, channelAttrs        = []
+	}
+
+nullImage :: URIString -> String -> URIString -> Image
+nullImage imguri title link = 
+  Image
+        { imageURI    = imguri
+	, imageTitle  = title
+	, imageURL    = imguri
+	, imageLink   = link
+	, imageDC     = []
+	, imageOther  = []
+	, imageAttrs  = []
+	}
+
+nullItem :: URIString -> TextString -> URIString -> Item
+nullItem uri title link = 
+  Item
+        { itemURI     = uri
+	, itemTitle   = title
+	, itemLink    = link
+	, itemDesc    = Nothing
+	, itemDC      = []
+	, itemTopics  = []
+	, itemContent = []
+	, itemOther   = []
+	, itemAttrs   = []
+	}
+
+nullTextInputInfo :: URIString -> TextString -> TextString -> URIString -> TextInputInfo
+nullTextInputInfo uri title nm link =
+  TextInputInfo
+        { textInputURI   = uri
+	, textInputTitle = title
+	, textInputDesc  = title
+	, textInputName  = nm
+	, textInputLink  = link
+	, textInputDC    = []
+	, textInputOther = []
+	, textInputAttrs = []
+	}
+
+nullTaxonomyTopic :: URIString -> URIString -> TaxonomyTopic
+nullTaxonomyTopic uri link = 
+  TaxonomyTopic
+        { taxonomyURI    = uri
+	, taxonomyLink   = link
+	, taxonomyTitle  = Nothing
+	, taxonomyDesc   = Nothing
+	, taxonomyTopics = []
+	, taxonomyDC     = []
+	, taxonomyOther  = []
+	}
+
+nullContentInfo :: ContentInfo
+nullContentInfo =
+  ContentInfo
+        { contentURI      = Nothing
+	, contentFormat   = Nothing
+	, contentEncoding = Nothing
+	, contentValue    = Nothing
+	}
+
