@@ -13,16 +13,21 @@ import XML
 import Control.Monad
 
 parseFeedFromFile :: FilePath -> IO Feed
-parseFeedFromFile fp = readFile fp >>= parseFeedString
+parseFeedFromFile fp = do
+  ls <- readFile fp
+  case parseFeedString ls of
+    Nothing -> fail "parseFeedFromFile: not a well-formed XML content"
+    Just f  -> return f
 
-parseFeedString :: String -> IO Feed
-parseFeedString str = do
+parseFeedString :: String -> Maybe Feed
+parseFeedString str = 
   case parseXMLDoc str of
-    Nothing -> fail "parseFeedString: not a well-formed XML content"
+    Nothing -> Nothing
     Just e  -> 
-      case readAtom e `mplus` readRSS1 e `mplus` readRSS2 e of
-        Nothing -> return (XMLFeed e)
-	Just f  -> return f
+      readAtom e `mplus` 
+      readRSS1 e `mplus` 
+      readRSS2 e `mplus` 
+      Just (XMLFeed e)
     
    
 readRSS2 :: XML.Element -> Maybe Feed
