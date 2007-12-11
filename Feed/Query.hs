@@ -16,6 +16,7 @@ import XML
 import DublinCore.Types
 
 import Data.List
+--import Debug.Trace
 
 feedItems :: Feed.Feed -> [Feed.Item]
 feedItems fe = 
@@ -50,10 +51,15 @@ getLink it =
     Feed.RSS1Item i -> Just (RSS1.itemLink i)
     Feed.XMLItem i  -> fmap (\ ei -> XML.strContent ei) $ findElement (unqual "link") i
  where
-  isSelf lr = Atom.linkRel lr == Just (Left "alternate") && isHTMLType (linkType lr)
+  isSelf lr = toStr (Atom.linkRel lr) == "alternate" && isHTMLType (linkType lr)
   
+   -- strip away
+  toStr Nothing = ""
+  toStr (Just (Left x)) = x
+  toStr (Just (Right x)) = x
+
   isHTMLType (Just str) = "lmth" `isPrefixOf` (reverse str)
-  isHTMLType _ = False
+  isHTMLType _ = True -- if none given, assume html.
   
 getTitle :: Feed.Item -> Maybe String
 getTitle it = 
@@ -70,7 +76,7 @@ getTitle it =
 getPublishDate :: Feed.Item -> Maybe String
 getPublishDate it = 
   case it of
-    Feed.AtomItem i -> Atom.entryPublished i
+    Feed.AtomItem i -> Just $ Atom.entryUpdated i
     Feed.RSSItem i  -> RSS.rssItemPubDate i
     Feed.RSS1Item i -> 
       case filter isDate $ RSS1.itemDC i of
