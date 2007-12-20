@@ -1,7 +1,7 @@
 module RSS.Import where
 
 import RSS.Syntax
-import XML
+import Text.XML.Light as XML
 
 import Data.Maybe (listToMaybe, mapMaybe)
 import Data.Char  (isSpace )

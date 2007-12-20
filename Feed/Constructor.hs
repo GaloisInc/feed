@@ -16,7 +16,7 @@ import Atom.Feed as Atom
 import RSS.Syntax as RSS
 import RSS1.Syntax as RSS1
 import DublinCore.Types
-import XML
+import Text.XML.Light as XML
 
 import Data.Maybe ( fromMaybe, mapMaybe )
 

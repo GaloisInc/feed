@@ -1,7 +1,10 @@
 Name:            feed
 Version:         0.1.0
 License:         BSD3
+License-file:    LICENSE
+Category:        Text
 Description:     Interfacing with RSS (v 0.9x, 2.x, 1.0) + Atom feeds.
+Synopsis:        Interfacing with RSS (v 0.9x, 2.x, 1.0) + Atom feeds.
 Extra-Source-Files:    tests/Main.hs tests/Setup.hs tests/rss-tests.cabal
 Cabal-version:   >= 1.2
 
@@ -11,13 +14,17 @@ flag new-base {
 }
 
 library {
-Exposed-Modules: RSS.Syntax, RSS.Import, RSS.Export, RSS1.Syntax, RSS1.Import, RSS1.Utils, RSS1.Export, DublinCore.Types, Atom.Feed, Atom.Feed.Import, Atom.Feed.Export, Atom.Feed.Link, Feed.Import, Feed.Types, Feed.Export, Feed.Query, Feed.Constructor
+    Exposed-Modules: RSS.Syntax, RSS.Import, RSS.Export,
+                     RSS1.Syntax, RSS1.Import, RSS1.Utils, RSS1.Export,
+                     DublinCore.Types,
+                     Atom.Feed, Atom.Feed.Import, Atom.Feed.Export, Atom.Feed.Link,
+                     Feed.Import, Feed.Types, Feed.Export, Feed.Query, Feed.Constructor
 Ghc-Options:     -Wall -O2
-Build-Depends:   base, xml >= 1.1
+Build-Depends:   base, xml >= 1.2
 }
 
 executable feed-test {
-  build-depends:        base, xml >= 1.1
+  build-depends:        base, xml >= 1.2
   if flag(new-base) {
     build-depends: base >= 3, containers, old-time, old-locale, filepath
   } else {

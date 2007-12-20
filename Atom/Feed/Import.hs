@@ -5,7 +5,7 @@ import Control.Monad (guard)
 
 import Atom.Feed
 import Atom.Feed.Export (atomName, atomThreadName)
-import XML
+import Text.XML.Light as XML
 
 
 pNodes       :: String -> [XML.Element] -> [XML.Element]

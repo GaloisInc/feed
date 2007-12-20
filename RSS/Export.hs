@@ -1,6 +1,6 @@
 module RSS.Export where
 
-import XML
+import Text.XML.Light as XML
 import RSS.Syntax
 
 import Data.List

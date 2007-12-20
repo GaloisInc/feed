@@ -2,7 +2,7 @@ module RSS1.Export
        ( xmlFeed
        ) where
 
-import XML
+import Text.XML.Light as XML
 import RSS1.Syntax
 import RSS1.Utils
 import DublinCore.Types

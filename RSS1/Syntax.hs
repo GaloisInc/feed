@@ -1,6 +1,6 @@
 module RSS1.Syntax where
 
-import XML.Types as XML
+import Text.XML.Light.Types as XML
 import DublinCore.Types
 
 type URIString   = String

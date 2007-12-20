@@ -1,6 +1,6 @@
 module Atom.Feed where
 
-import XML
+import qualified Text.XML.Light as XML
 
 -- NOTE: In the future we may want to have more structured
 -- types for these.

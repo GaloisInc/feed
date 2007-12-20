@@ -11,7 +11,7 @@ import Feed.Types as Feed
 import RSS.Syntax  as RSS
 import Atom.Feed   as Atom
 import RSS1.Syntax as RSS1
-import XML
+import Text.XML.Light as XML
 
 import DublinCore.Types
 

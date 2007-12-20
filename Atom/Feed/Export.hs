@@ -1,6 +1,6 @@
 module Atom.Feed.Export where
 
-import XML
+import Text.XML.Light as XML
 import Atom.Feed
 import Data.List
 import Data.Maybe

@@ -3,7 +3,7 @@ module Feed.Types where
 import RSS.Syntax  as RSS
 import Atom.Feed   as Atom
 import RSS1.Syntax as RSS1
-import XML as XML
+import Text.XML.Light as XML
 
 -- Initially, we just wrap up the different feed formats in a sum type.
 data Feed

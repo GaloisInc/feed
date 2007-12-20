@@ -1,6 +1,6 @@
 module Main where
 
-import XML
+import Text.XML.Light
 import Feed.Import
 import Feed.Export
 

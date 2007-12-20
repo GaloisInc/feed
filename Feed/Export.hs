@@ -6,7 +6,7 @@ import Atom.Feed.Export as Atom
 import RSS.Export as RSS
 import RSS1.Export as RSS1
 
-import XML
+import Text.XML.Light as XML
 
 xmlFeed :: Feed -> XML.Element
 xmlFeed fe =

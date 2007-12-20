@@ -8,7 +8,7 @@ import RSS.Import       as RSS
 import RSS1.Import      as RSS1
 
 import Feed.Types
-import XML 
+import Text.XML.Light as XML
 
 import Control.Monad
 

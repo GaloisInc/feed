@@ -1,6 +1,6 @@
 module RSS.Syntax where
 
-import XML
+import Text.XML.Light as XML
 
 -- The Radio Userland version of RSS documents\/feeds.
 -- (versions 0.9x, 2.x)
@@ -11,7 +11,7 @@ data RSS
      , rssChannel :: RSSChannel
      , rssOther   :: [XML.Element]
      }
-     
+
 type URLString = String
 type DateString = String
 
