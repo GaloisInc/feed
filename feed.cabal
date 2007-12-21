@@ -20,11 +20,11 @@ library {
                      Atom.Feed, Atom.Feed.Import, Atom.Feed.Export, Atom.Feed.Link,
                      Feed.Import, Feed.Types, Feed.Export, Feed.Query, Feed.Constructor
 Ghc-Options:     -Wall -O2
-Build-Depends:   base, xml >= 1.2.1
+Build-Depends:   base, xml >= 1.2.2
 }
 
 executable feed-test {
-  build-depends:        base, xml >= 1.2.1
+  build-depends:        base, xml >= 1.2.2
   if flag(new-base) {
     build-depends: base >= 3, containers, old-time, old-locale, filepath
   } else {

@@ -36,7 +36,7 @@ pMany        :: String -> (XML.Element -> Maybe a) -> [XML.Element] -> [a]
 pMany p f es  = mapMaybe f (pNodes p es)
 
 children     :: XML.Element -> [XML.Element]
-children e    = onlyElems (elChildren e)
+children e    = onlyElems (elContent e)
 
 elementFeed  :: XML.Element -> Maybe Feed
 elementFeed e =
@@ -172,7 +172,7 @@ pContent e =
         _   -> Nothing
     Just ty      ->
       case pAttr "src" e of
-        Nothing  -> return (MixedContent (Just ty) (elChildren e))
+        Nothing  -> return (MixedContent (Just ty) (elContent e))
         Just uri -> return (ExternalContent (Just ty) uri)
 
 pInReplyTotal :: [XML.Element] -> Maybe InReplyTotal
@@ -198,6 +198,6 @@ pInReplyTo es = do
        , replyToType    = pQAttr (atomThreadName "type") t
        , replyToSource  = pQAttr (atomThreadName "source") t
        , replyToOther   = elAttribs t -- ToDo: snip out matched ones.
-       , replyToContent = fromMaybe [] $ elContent t
+       , replyToContent = elContent t
        }
    _ -> fail "no parse"
