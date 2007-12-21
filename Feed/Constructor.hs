@@ -90,7 +90,7 @@ withItemDate dt fi =
        (_,[]) -> Feed.Types.RSS1Item i{RSS1.itemDC=DCItem{dcElt=DC_Date,dcText=dt}:RSS1.itemDC i}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (leaf (unqual "pubDate") dt) $
+        addChild (node (unqual "pubDate", dt)) $
 	    filterChildren (\ e -> elName e /= unqual "pubDate")
 	                   i
  where
@@ -109,7 +109,7 @@ withItemTitle tit fi =
       Feed.Types.RSS1Item  i{RSS1.itemTitle=tit}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (leaf (unqual "title") tit) $
+        addChild (node (unqual "title",tit)) $
 	    filterChildren (\ e -> elName e /= unqual "title")
 	                   i
 
@@ -126,7 +126,7 @@ withItemLink url fi =
       Feed.Types.RSS1Item  i{RSS1.itemLink=url}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (leaf (unqual "link") url) $
+        addChild (node (unqual "link", url)) $
 	    filterChildren (\ e -> elName e /= unqual "link")
 	                   i
  where

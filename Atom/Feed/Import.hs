@@ -1,6 +1,6 @@
 module Atom.Feed.Import where
 
-import Data.Maybe (listToMaybe, mapMaybe, fromMaybe)
+import Data.Maybe (listToMaybe, mapMaybe)
 import Control.Monad (guard)
 
 import Atom.Feed
