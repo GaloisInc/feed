@@ -10,13 +10,8 @@ qualNode :: String -> [XML.Content] -> XML.Element
 qualNode n cs = 
   blank_element 
     { elName    = qualName n
-    , elContent = children cs
+    , elContent = cs
     }
-
-children :: [Content] -> Maybe [Content]
-children [] = Nothing
-children xs = Just xs
-
 
 qualName :: String -> QName
 qualName n = QName{qName=n,qURI=Nothing,qPrefix=Nothing}
@@ -156,7 +151,7 @@ xmlAttr k v = Attr (qualName k) v
 xmlLeaf :: String -> String -> XML.Element
 xmlLeaf tg txt = 
  blank_element{ elName = qualName tg
- 	      , elContent = Just [ Text blank_cdata { cdData = txt } ]
+ 	      , elContent = [ Text blank_cdata { cdData = txt } ]
 	      }
 
 ---

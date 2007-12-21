@@ -52,17 +52,13 @@ atomName nc   = QName { qName   = nc
 atomAttr :: String -> String -> Attr
 atomAttr x y  = Attr (atomName x) y
 
-children :: [Content] -> Maybe [Content]
-children [] = Nothing
-children xs = Just xs
-
 atomNode :: String -> [XML.Content] -> XML.Element
-atomNode x xs = blank_element { elName = atomName x, elContent = children xs }
+atomNode x xs = blank_element { elName = atomName x, elContent = xs }
 
 atomLeaf :: String -> String -> XML.Element
 atomLeaf tag txt = blank_element
                      { elName    = atomName tag
-                     , elContent = Just [ Text blank_cdata { cdData = txt } ]
+                     , elContent = [ Text blank_cdata { cdData = txt } ]
                      }
 
 atomThreadName :: String -> QName
@@ -77,12 +73,12 @@ atomThreadAttr x y  = Attr (atomThreadName x) y
 
 atomThreadNode :: String -> [XML.Content] -> XML.Element
 atomThreadNode x xs =
-  blank_element { elName = atomThreadName x, elContent = children xs }
+  blank_element { elName = atomThreadName x, elContent = xs }
 
 atomThreadLeaf :: String -> String -> XML.Element
 atomThreadLeaf tag txt =
   blank_element { elName = atomThreadName tag
-                , elContent = Just [ Text blank_cdata { cdData = txt } ]
+                , elContent = [ Text blank_cdata { cdData = txt } ]
                 }
 
 --------------------------------------------------------------------------------

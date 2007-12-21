@@ -23,7 +23,7 @@ pMany        :: String -> (XML.Element -> Maybe a) -> [XML.Element] -> [a]
 pMany p f es  = mapMaybe f (pNodes p es)
 
 children     :: XML.Element -> [XML.Element]
-children e    = onlyElems (elChildren e)
+children e    = onlyElems (elContent e)
 
 qualName :: String -> QName
 qualName x = QName{qName=x,qURI=Nothing,qPrefix=Nothing}

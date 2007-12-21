@@ -14,12 +14,8 @@ qualNode :: (Maybe String,Maybe String) -> String -> [XML.Content] -> XML.Elemen
 qualNode ns n cs = 
   blank_element 
     { elName    = qualName ns n
-    , elContent = ch cs
+    , elContent = cs
     }
- where
-  ch :: [Content] -> Maybe [Content]
-  ch [] = Nothing
-  ch xs = Just xs
 
 ---
 xmlFeed :: Feed -> XML.Element
@@ -173,7 +169,7 @@ xmlItem i =
 xmlLeaf :: (Maybe String,Maybe String) -> String -> String -> XML.Element
 xmlLeaf ns tg txt = 
  blank_element{ elName = qualName ns tg
- 	      , elContent = Just [ Text blank_cdata { cdData = txt } ]
+ 	      , elContent = [ Text blank_cdata { cdData = txt } ]
 	      }
 
 xmlEmpty :: (Maybe String,Maybe String) -> String -> [XML.Attr] -> XML.Element

@@ -144,8 +144,8 @@ withItemLink url fi =
 filterChildren :: (XML.Element -> Bool) -> XML.Element -> XML.Element
 filterChildren pre e = 
   case elContent e of
-    Nothing -> e
-    Just cs -> e{elContent=Just (mapMaybe filterElt cs)}
+    [] -> e
+    cs -> e { elContent = mapMaybe filterElt cs }
  where
    filterElt xe@(XML.Elem el) 
      | pre el    = Just xe
@@ -153,8 +153,5 @@ filterChildren pre e =
    filterElt xe  = Just xe
 
 addChild :: XML.Element -> XML.Element -> XML.Element
-addChild a b = 
- case elContent b of
-   Nothing -> b{elContent=Just [XML.Elem a]}
-   Just xs -> b{elContent=Just (XML.Elem a : xs)}
-   
+addChild a b = b { elContent = XML.Elem a : elContent b }
+
