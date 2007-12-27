@@ -24,6 +24,7 @@ data Feed
       , feedRights       :: Maybe TextContent
       , feedSubtitle     :: Maybe TextContent
       , feedEntries      :: [Entry]
+      , feedAttr         :: [XML.Attr]
       , feedOther        :: [XML.Element]
       }
 
@@ -42,6 +43,7 @@ nullFeed i t u = Feed
       , feedRights       = Nothing
       , feedSubtitle     = Nothing
       , feedEntries      = []
+      , feedAttr         = []
       , feedOther        = []
       }
 
@@ -92,11 +94,19 @@ data EntryContent
 
 data Category
  = Category
-       { catTerm   :: String
-       , catScheme :: Maybe URI
-       , catLabel  :: Maybe String
-       , catOther  :: [XML.Element]
+       { catTerm   :: String         -- ^ the tag\/term of the category.
+       , catScheme :: Maybe URI      -- ^ optional URL for identifying the categorization scheme.
+       , catLabel  :: Maybe String   -- ^ human-readable label of the category
+       , catOther  :: [XML.Element]  -- ^ unknown elements, for extensibility.
        }
+
+newCategory :: String -> Category
+newCategory t = Category
+  { catTerm   = t
+  , catScheme = Nothing
+  , catLabel  = Just t
+  , catOther  = []
+  }
 
 data Generator
  = Generator
