@@ -59,8 +59,33 @@ elementFeed e =
        , feedRights       = pTextContent "rights" es
        , feedLinks        = pMany "link" pLink es
        , feedEntries      = pMany "entry" pEntry es
-       , feedOther        = []  -- XXX: ?
+       , feedOther        = other_es es
+       , feedAttr         = other_as (elAttribs e)
        }
+  where
+   other_es es = filter (\ el -> not (elName el `elem` known_elts))
+   	                es
+
+   other_as as = filter (\ a -> not (attrKey a `elem` known_attrs))
+   	                as
+
+    -- let's have them all (including xml:base and xml:lang + xmlns: stuff)
+   known_attrs = []
+   known_elts = map atomName
+     [ "author"
+     , "category"
+     , "contributor"
+     , "generator"
+     , "icon"
+     , "id"
+     , "link"
+     , "logo"
+     , "rights"
+     , "subtitle"
+     , "title"
+     , "updated"
+     , "entry"
+     ]
 
 pTextContent :: String -> [XML.Element] -> Maybe TextContent
 pTextContent tag es =
