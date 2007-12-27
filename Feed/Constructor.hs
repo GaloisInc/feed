@@ -8,7 +8,7 @@ module Feed.Constructor
        , withItemTitle  -- :: String     -> Item -> Item
        , withItemLink   -- :: URLString  -> Item -> Item
        , withItemDate   -- :: DateString -> Item -> Item
-       , withCategories -- :: [String]   -> Item -> Item
+       , withCategories -- :: [(String, Maybe String)] -> Item -> Item
        ) where
 
 import Feed.Types
@@ -136,19 +136,25 @@ withItemLink url fi =
   toStr (Just (Left x)) = x
   toStr (Just (Right x)) = x
     
-withCategories :: [String] -> Feed.Types.Item -> Feed.Types.Item
+withCategories :: [(String,Maybe String)] -> Feed.Types.Item -> Feed.Types.Item
 withCategories cats fi = 
   case fi of
     Feed.Types.AtomItem e ->
-      Feed.Types.AtomItem e{Atom.entryCategories=map Atom.newCategory cats ++ entryCategories e}
+      Feed.Types.AtomItem e{Atom.entryCategories=map ( \ (t,mb) -> (Atom.newCategory t){Atom.catScheme=mb})
+                                                     cats ++ entryCategories e}
     Feed.Types.RSSItem i  ->
-      Feed.Types.RSSItem  i{RSS.rssItemCategories=map RSS.newCategory cats ++ rssItemCategories i}
+      Feed.Types.RSSItem  i{RSS.rssItemCategories=
+                                map (\ (t,mb) -> (RSS.newCategory t){RSS.rssCategoryDomain=mb})
+				    cats ++ rssItemCategories i}
     Feed.Types.RSS1Item i ->
-      Feed.Types.RSS1Item  i{RSS1.itemDC=map (\ t -> DCItem{dcElt=DC_Subject,dcText=t}) cats ++ RSS1.itemDC i}
+      Feed.Types.RSS1Item  i{RSS1.itemDC=map (\ (t,_) -> DCItem{dcElt=DC_Subject,dcText=t}) cats ++ RSS1.itemDC i}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        foldr (\ t acc -> 
-	         addChild (node (unqual "category",Attr (unqual "term") t)) acc)
+        foldr (\ (t,mb) acc -> 
+	         addChild (node ( unqual "category"
+		                , (fromMaybe (\x -> [x])
+		                             (fmap (\v -> (\ x -> [Attr (unqual "domain") v,x])) mb) $
+					     (Attr (unqual "term") t)))) acc)
               i
 	      cats
 
