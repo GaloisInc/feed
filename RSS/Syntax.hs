@@ -187,8 +187,8 @@ nullEnclosure url len ty =
      , rssEnclosureAttrs   = []
      }
 
-nullCategory :: String -> RSSCategory
-nullCategory nm = 
+newCategory :: String -> RSSCategory
+newCategory nm = 
   RSSCategory
      { rssCategoryDomain   = Nothing
      , rssCategoryAttrs    = []
