@@ -4,10 +4,11 @@ module Feed.Constructor
        , getFeedKind   -- :: Feed     -> FeedKind
        , addItem       -- :: Item -> Feed -> Feed
 
-       , newItem       -- :: FeedKind   -> Item
-       , withItemTitle -- :: String     -> Item -> Item
-       , withItemLink  -- :: URLString  -> Item -> Item
-       , withItemDate  -- :: DateString -> Item -> Item
+       , newItem        -- :: FeedKind   -> Item
+       , withItemTitle  -- :: String     -> Item -> Item
+       , withItemLink   -- :: URLString  -> Item -> Item
+       , withItemDate   -- :: DateString -> Item -> Item
+       , withCategories -- :: [String]   -> Item -> Item
        ) where
 
 import Feed.Types
@@ -20,12 +21,8 @@ import Text.XML.Light as XML
 
 import Data.Maybe ( fromMaybe, mapMaybe )
 
-data FeedKind
- = AtomKind
- | RSSKind (Maybe String)  -- Nothing => default version (2.0)
- | RDFKind (Maybe String)  -- Nothing => default version (1.0)
-   deriving ( Eq )
-
+-- | Construct an empty feed document, intending to output it in 
+-- the 'fk' feed format.
 newFeed :: FeedKind -> Feed.Types.Feed
 newFeed fk = 
   case fk of
@@ -139,6 +136,22 @@ withItemLink url fi =
   toStr (Just (Left x)) = x
   toStr (Just (Right x)) = x
     
+withCategories :: [String] -> Feed.Types.Item -> Feed.Types.Item
+withCategories cats fi = 
+  case fi of
+    Feed.Types.AtomItem e ->
+      Feed.Types.AtomItem e{Atom.entryCategories=map Atom.newCategory cats ++ entryCategories e}
+    Feed.Types.RSSItem i  ->
+      Feed.Types.RSSItem  i{RSS.rssItemCategories=map RSS.newCategory cats ++ rssItemCategories i}
+    Feed.Types.RSS1Item i ->
+      Feed.Types.RSS1Item  i{RSS1.itemDC=map (\ t -> DCItem{dcElt=DC_Subject,dcText=t}) cats ++ RSS1.itemDC i}
+    Feed.Types.XMLItem i  ->
+      Feed.Types.XMLItem $
+        foldr (\ t acc -> 
+	         addChild (node (unqual "category",Attr (unqual "term") t)) acc)
+              i
+	      cats
+
 -- helpers..
 
 filterChildren :: (XML.Element -> Bool) -> XML.Element -> XML.Element
