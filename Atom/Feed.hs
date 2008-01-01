@@ -24,7 +24,7 @@ data Feed
       , feedRights       :: Maybe TextContent
       , feedSubtitle     :: Maybe TextContent
       , feedEntries      :: [Entry]
-      , feedAttr         :: [XML.Attr]
+      , feedAttrs        :: [XML.Attr]
       , feedOther        :: [XML.Element]
       }
 
@@ -43,46 +43,48 @@ nullFeed i t u = Feed
       , feedRights       = Nothing
       , feedSubtitle     = Nothing
       , feedEntries      = []
-      , feedAttr         = []
+      , feedAttrs        = []
       , feedOther        = []
       }
 
 data Entry
  = Entry
-      { entryId          :: String
-      , entryTitle       :: TextContent
-      , entryUpdated     :: Date
-      , entryAuthors     :: [Person]
-      , entryCategories  :: [Category]
-      , entryContent     :: Maybe EntryContent
-      , entryContributor :: [Person]
-      , entryLinks       :: [Link]
-      , entryPublished   :: Maybe Date
-      , entryRights      :: Maybe TextContent
-      , entrySource      :: Maybe Source
-      , entrySummary     :: Maybe TextContent
-      , entryInReplyTo   :: Maybe InReplyTo
-      , entryInReplyTotal  :: Maybe InReplyTotal
-      , entryOther       :: [XML.Element]
+      { entryId           :: String
+      , entryTitle        :: TextContent
+      , entryUpdated      :: Date
+      , entryAuthors      :: [Person]
+      , entryCategories   :: [Category]
+      , entryContent      :: Maybe EntryContent
+      , entryContributor  :: [Person]
+      , entryLinks        :: [Link]
+      , entryPublished    :: Maybe Date
+      , entryRights       :: Maybe TextContent
+      , entrySource       :: Maybe Source
+      , entrySummary      :: Maybe TextContent
+      , entryInReplyTo    :: Maybe InReplyTo
+      , entryInReplyTotal :: Maybe InReplyTotal
+      , entryAttrs        :: [XML.Attr]
+      , entryOther        :: [XML.Element]
       }
 
 nullEntry :: String -> TextContent -> Date -> Entry
 nullEntry i t u = Entry
-      { entryId          = i
-      , entryTitle       = t
-      , entryUpdated     = u
-      , entryAuthors     = []
-      , entryCategories  = []
-      , entryContent     = Nothing
-      , entryContributor = []
-      , entryLinks       = []
-      , entryPublished   = Nothing
-      , entryRights      = Nothing
-      , entrySource      = Nothing
-      , entrySummary     = Nothing
-      , entryInReplyTo   = Nothing
-      , entryInReplyTotal= Nothing
-      , entryOther       = []
+      { entryId           = i
+      , entryTitle        = t
+      , entryUpdated      = u
+      , entryAuthors      = []
+      , entryCategories   = []
+      , entryContent      = Nothing
+      , entryContributor  = []
+      , entryLinks        = []
+      , entryPublished    = Nothing
+      , entryRights       = Nothing
+      , entrySource       = Nothing
+      , entrySummary      = Nothing
+      , entryInReplyTo    = Nothing
+      , entryInReplyTotal = Nothing
+      , entryAttrs        = []
+      , entryOther        = []
       }
 
 data EntryContent
@@ -158,6 +160,23 @@ data Source
       , sourceUpdated     :: Maybe Date
       , sourceOther       :: [XML.Element]
       }
+
+nullSource :: Source
+nullSource = Source
+      { sourceAuthors     = []
+      , sourceCategories  = []
+      , sourceGenerator   = Nothing
+      , sourceIcon        = Nothing
+      , sourceId          = Nothing
+      , sourceLinks       = []
+      , sourceLogo        = Nothing
+      , sourceRights      = Nothing
+      , sourceSubtitle    = Nothing
+      , sourceTitle       = Nothing
+      , sourceUpdated     = Nothing
+      , sourceOther       = []
+      }
+  
 
 data Person
  = Person
