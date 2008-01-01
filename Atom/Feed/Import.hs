@@ -60,7 +60,7 @@ elementFeed e =
        , feedLinks        = pMany "link" pLink es
        , feedEntries      = pMany "entry" pEntry es
        , feedOther        = other_es es
-       , feedAttr         = other_as (elAttribs e)
+       , feedAttrs        = other_as (elAttribs e)
        }
   where
    other_es es = filter (\ el -> not (elName el `elem` known_elts))
@@ -181,9 +181,16 @@ pEntry e =
        , entrySummary      = pTextContent "summary" es
        , entryInReplyTo    = pInReplyTo es
        , entryInReplyTotal = pInReplyTotal es
+       , entryAttrs        = other_as (elAttribs e)
        , entryOther        = [] -- ?
        }
+ where
+   other_as as = filter (\ a -> not (attrKey a `elem` known_attrs))
+   	                as
 
+    -- let's have them all (including xml:base and xml:lang + xmlns: stuff)
+   known_attrs = []
+   
 pContent :: XML.Element -> Maybe EntryContent
 pContent e =
   case pAttr "type" e of
