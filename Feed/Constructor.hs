@@ -4,9 +4,15 @@ module Feed.Constructor
        , getFeedKind     -- :: Feed     -> FeedKind
        , addItem         -- :: Item -> Feed -> Feed
 
-       , newItem          -- :: FeedKind   -> Item
+       , newItem              -- :: FeedKind   -> Item
+       , getItemKind          -- :: Item       -> FeedKind
+       , atomEntryToItem      -- :: Atom.Entry -> Item
+       , rssItemToItem        -- :: RSS.Item   -> Item
+       , rdfItemToItem        -- :: RSS1.Item  -> Item
+
        , withItemTitle        -- :: String     -> Item -> Item
        , withItemLink         -- :: URLString  -> Item -> Item
+       , withItemPubDate      -- :: DateString -> Item -> Item
        , withItemDate         -- :: DateString -> Item -> Item
        , withItemAuthor       -- :: String     -> Item -> Item
        , withItemCommentLink  -- :: String     -> Item -> Item
@@ -80,6 +86,23 @@ newItem fk =
 						  "dummy-item-title"
 						  "dummy-item-link")
 
+getItemKind :: Feed.Types.Item -> FeedKind
+getItemKind f = 
+  case f of
+    Feed.Types.AtomItem{} -> AtomKind
+    Feed.Types.RSSItem{}  -> RSSKind (Just "2.0") -- good guess..
+    Feed.Types.RSS1Item{} -> RDFKind (Just "1.0")
+    Feed.Types.XMLItem{}  -> RSSKind (Just "2.0")
+
+atomEntryToItem :: Atom.Entry -> Feed.Types.Item
+atomEntryToItem e = Feed.Types.AtomItem e
+
+rssItemToItem :: RSS.RSSItem -> Feed.Types.Item
+rssItemToItem i = Feed.Types.RSSItem i
+
+rdfItemToItem :: RSS1.Item -> Feed.Types.Item
+rdfItemToItem i = Feed.Types.RSS1Item i
+
 -- | 'withItemDate updDate' associates the last-updated date, 'updDate',
 -- with a feed item. If the RSS variant doesn't support the notion of
 -- last-updated, 'updDate' is set equal to the creation time.
@@ -101,6 +124,9 @@ withItemDate dt fi =
 	                   i
  where
   isDate dc  = dcElt dc == DC_Date
+
+withItemPubDate :: DateString -> Feed.Types.Item -> Feed.Types.Item
+withItemPubDate dt fi = withItemDate dt fi
 
 -- | 'withItemTitle myTitle' associates a new title, 'myTitle',
 -- with a feed item.
