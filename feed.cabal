@@ -18,7 +18,7 @@ library {
                      RSS1.Syntax, RSS1.Import, RSS1.Utils, RSS1.Export,
                      DublinCore.Types,
                      Atom.Feed, Atom.Feed.Import, Atom.Feed.Export, Atom.Feed.Link,
-                     Feed.Import, Feed.Types, Feed.Export, Feed.Query, Feed.Constructor
+                     Feed.Import, Feed.Types, Feed.Export, Feed.Query, Feed.Constructor, Feed.Translate
 Ghc-Options:     -Wall -O2
 Build-Depends:   base, xml >= 1.2.3
 }
