@@ -5,16 +5,17 @@ module Feed.Constructor
        , addItem         -- :: Item -> Feed -> Feed
 
        , newItem          -- :: FeedKind   -> Item
-       , withItemTitle    -- :: String     -> Item -> Item
-       , withItemLink     -- :: URLString  -> Item -> Item
-       , withItemDate     -- :: DateString -> Item -> Item
-       , withItemAuthor   -- :: String     -> Item -> Item
-       , withItemCommentLink -- :: String     -> Item -> Item
-       , withItemEnclosure   -- :: String  -> Maybe String -> Integer -> Item -> Item
-       , withItemFeedLink    -- :: String -> String -> Item -> Item
-       , withItemId       -- :: Bool -> String -> Item -> Item
-       , withCategories   -- :: [(String, Maybe String)] -> Item -> Item
-       , withDescription  -- :: String     -> Item -> Item
+       , withItemTitle        -- :: String     -> Item -> Item
+       , withItemLink         -- :: URLString  -> Item -> Item
+       , withItemDate         -- :: DateString -> Item -> Item
+       , withItemAuthor       -- :: String     -> Item -> Item
+       , withItemCommentLink  -- :: String     -> Item -> Item
+       , withItemEnclosure    -- :: String  -> Maybe String -> Integer -> Item -> Item
+       , withItemFeedLink     -- :: String -> String -> Item -> Item
+       , withItemId           -- :: Bool -> String -> Item -> Item
+       , withItemCategories   -- :: [(String, Maybe String)] -> Item -> Item
+       , withItemDescription  -- :: String     -> Item -> Item
+       , withItemRights       -- :: String     -> Item -> Item
        ) where
 
 import Feed.Types
@@ -124,7 +125,7 @@ withItemAuthor :: String -> Feed.Types.Item -> Feed.Types.Item
 withItemAuthor au fi = 
   case fi of
     Feed.Types.AtomItem e ->
-      Feed.Types.AtomItem e{Atom.entryAuthors=[nullPerson{personName=au}]}
+      Feed.Types.AtomItem e{Atom.entryAuthors=[nullPerson{personName=au,personURI=Just au}]}
     Feed.Types.RSSItem i  ->
       Feed.Types.RSSItem  i{RSS.rssItemAuthor=Just au}
     Feed.Types.RSS1Item i ->
@@ -225,10 +226,10 @@ withItemId isURL idS fi =
   showBool x  = map toLower (show x)
   isId dc     = dcElt dc == DC_Identifier
 
--- | 'withDescription desc' associates a new descriptive string
+-- | 'withItemDescription desc' associates a new descriptive string (aka summary)
 -- with a feed item.
-withDescription :: String -> Feed.Types.Item -> Feed.Types.Item
-withDescription desc fi = 
+withItemDescription :: String -> Feed.Types.Item -> Feed.Types.Item
+withItemDescription desc fi = 
   case fi of
     Feed.Types.AtomItem e ->
       Feed.Types.AtomItem e{Atom.entrySummary=Just (TextString desc)}
@@ -242,7 +243,26 @@ withDescription desc fi =
 	    filterChildren (\ e -> elName e /= unqual "description")
 	                   i
 
-
+-- | 'withItemRights rightStr' associates the rights information 'rightStr'
+-- with a feed item.
+withItemRights :: String -> Feed.Types.Item -> Feed.Types.Item
+withItemRights desc fi = 
+  case fi of
+    Feed.Types.AtomItem e ->
+      Feed.Types.AtomItem e{Atom.entryRights=Just (TextString desc)}
+     -- Note: per-item copyright information isn't supported by RSS2.0 (and earlier editions),
+     -- you can only attach this at the feed/channel level. So, there's not much we can do
+     -- except dropping the information on the floor here. (Rolling our own attribute or
+     -- extension element is an option, but would prefer if someone else had started that
+     -- effort already.
+    Feed.Types.RSSItem{}  -> fi
+    Feed.Types.RSS1Item i ->
+      case break ((==DC_Rights).dcElt) $ RSS1.itemDC i of
+       (as,(dci:bs)) -> Feed.Types.RSS1Item i{RSS1.itemDC=as++dci{dcText=desc}:bs}
+       (_,[]) -> Feed.Types.RSS1Item i{RSS1.itemDC=DCItem{dcElt=DC_Rights,dcText=desc}:RSS1.itemDC i}
+     -- Since we're so far assuming that a shallow XML rep. of an item
+     -- is of RSS2.0 ilk, pinning on the rights info is hard (see above.)
+    Feed.Types.XMLItem{}  -> fi
 
 -- | 'withItemTitle myLink' associates a new URL, 'myLink',
 -- with a feed item.
@@ -270,30 +290,32 @@ withItemLink url fi =
   toStr (Just (Left x)) = x
   toStr (Just (Right x)) = x
     
-withCategories :: [(String,Maybe String)]
-	       -> Feed.Types.Item
-	       -> Feed.Types.Item
-withCategories cats fi = 
+withItemCategories :: [(String,Maybe String)]
+	           -> Feed.Types.Item
+	           -> Feed.Types.Item
+withItemCategories cats fi = 
   case fi of
-    Feed.Types.AtomItem e ->
-      Feed.Types.AtomItem 
-        e{Atom.entryCategories=map ( \ (t,mb) -> (Atom.newCategory t){Atom.catScheme=mb})
-                                                     cats ++ entryCategories e}
-    Feed.Types.RSSItem i  ->
-      Feed.Types.RSSItem  i{RSS.rssItemCategories=
-                                map (\ (t,mb) -> (RSS.newCategory t){RSS.rssCategoryDomain=mb})
-				    cats ++ rssItemCategories i}
-    Feed.Types.RSS1Item i ->
-      Feed.Types.RSS1Item  i{RSS1.itemDC=map (\ (t,_) -> DCItem{dcElt=DC_Subject,dcText=t}) cats ++ RSS1.itemDC i}
-    Feed.Types.XMLItem i  ->
-      Feed.Types.XMLItem $
-        foldr (\ (t,mb) acc -> 
-	         addChild (node ( unqual "category"
-		                , (fromMaybe (\x -> [x])
+    Feed.Types.AtomItem e -> Feed.Types.AtomItem 
+        e{ Atom.entryCategories =
+	        map ( \ (t,mb) -> (Atom.newCategory t){Atom.catScheme=mb})
+                    cats ++ entryCategories e}
+    Feed.Types.RSSItem i  -> Feed.Types.RSSItem 
+        i{RSS.rssItemCategories=
+              map (\ (t,mb) -> (RSS.newCategory t){RSS.rssCategoryDomain=mb})
+		  cats ++ rssItemCategories i}
+    Feed.Types.RSS1Item i -> Feed.Types.RSS1Item 
+         i{RSS1.itemDC=
+	        map (\ (t,_) -> DCItem{dcElt=DC_Subject,dcText=t})
+	            cats ++ RSS1.itemDC i}
+    Feed.Types.XMLItem i  -> Feed.Types.XMLItem $
+         foldr (\ (t,mb) acc -> 
+	          addChild (node ( unqual "category"
+		                 , (fromMaybe (\x -> [x])
 		                             (fmap (\v -> (\ x -> [Attr (unqual "domain") v,x])) mb) $
-					     (Attr (unqual "term") t)))) acc)
-              i
-	      cats
+					     (Attr (unqual "term") t))
+			         )) acc)
+               i
+	       cats
 
 -- helpers..
 
