@@ -1,8 +1,20 @@
-module Feed.Types where
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.Feed.Types
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
 
-import RSS.Syntax  as RSS
-import Atom.Feed   as Atom
-import RSS1.Syntax as RSS1
+module Text.Feed.Types where
+
+import Text.RSS.Syntax  as RSS
+import Text.Atom.Feed   as Atom
+import Text.RSS1.Syntax as RSS1
 import Text.XML.Light as XML
 
 -- | The abstract type of feed documents. The internal representation

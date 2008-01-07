@@ -1,13 +1,24 @@
-module RSS1.Import 
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.RSS1.Import 
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
+
+module Text.RSS1.Import 
        ( elementToFeed
-       , 
        ) where
 
-import RSS1.Syntax
-import RSS1.Utils
+import Text.RSS1.Syntax
+import Text.RSS1.Utils
 import Text.XML.Light      as XML
 import Text.XML.Light.Proc as XML
-import DublinCore.Types
+import Text.DublinCore.Types
 
 import Data.Maybe (mapMaybe, fromMaybe)
 import Control.Monad (guard,mplus)

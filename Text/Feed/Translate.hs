@@ -1,19 +1,29 @@
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.Feed.Translate 
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
 --
 -- Translating between RSS formats; work in progress.
 --
-module Feed.Translate 
+module Text.Feed.Translate 
        ( translateItemTo  -- :: FeedKind -> Item -> Item
        , withAtomEntry    -- :: (Atom.Entry -> Atom.Entry) -> Item -> Item
        , withRSSItem      -- :: (RSS.RSSItem -> RSS.RSSItem) -> Item -> Item
        , withRSS1Item     -- :: (RSS1.Item -> RSS1.Item) -> Item -> Item
        ) where
 
-import Feed.Types as Feed
-import Feed.Constructor
+import Text.Feed.Types as Feed
+import Text.Feed.Constructor
 
-import RSS.Syntax as RSS
-import qualified RSS1.Syntax as RSS1
-import Atom.Feed as Atom
+import Text.RSS.Syntax as RSS
+import qualified Text.RSS1.Syntax as RSS1
+import Text.Atom.Feed as Atom
 
 import Data.Maybe ( fromMaybe )
 
@@ -64,26 +74,26 @@ toAtomItem it =
       where
        outIt = 
          (flip withAtomEntry) (newItem AtomKind)
-	   (\ e -> e{ Atom.entryOther = RSS.rssItemOther ri
-	            , Atom.entryAttrs = RSS.rssItemAttrs ri
-	            })
+           (\ e -> e{ Atom.entryOther = RSS.rssItemOther ri
+                    , Atom.entryAttrs = RSS.rssItemAttrs ri
+                    })
 
        pipeline_rss_atom = 
          [ mb withItemTitle       (rssItemTitle ri)
-	 , mb withItemLink        (rssItemLink  ri)
-	 , mb withItemDescription (rssItemDescription ri)
-	 , mb withItemAuthor      (rssItemAuthor ri)
-	 , ls withItemCategories  (rssItemCategories ri)
-	 , mb withItemId'         (rssItemGuid ri)
-	 , mb withItemCommentLink (rssItemComments ri)
-	 , mb withItemEnclosure'  (rssItemEnclosure ri)
-	 , mb withItemPubDate     (rssItemPubDate ri)
-	 ]
-	 
+         , mb withItemLink        (rssItemLink  ri)
+         , mb withItemDescription (rssItemDescription ri)
+         , mb withItemAuthor      (rssItemAuthor ri)
+         , ls withItemCategories  (rssItemCategories ri)
+         , mb withItemId'         (rssItemGuid ri)
+         , mb withItemCommentLink (rssItemComments ri)
+         , mb withItemEnclosure'  (rssItemEnclosure ri)
+         , mb withItemPubDate     (rssItemPubDate ri)
+         ]
+         
        withItemEnclosure' e = 
           withItemEnclosure (rssEnclosureURL e)
-	  		    (Just $ rssEnclosureType e)
-			    (rssEnclosureLength e)
+                            (Just $ rssEnclosureType e)
+                            (rssEnclosureLength e)
        withItemId' g = withItemId (fromMaybe True (rssGuidPermanentURL g)) (rssGuidValue g)
 
        mb _ Nothing  = id
@@ -96,29 +106,29 @@ toAtomItem it =
 {-
        pipeline_rss_atom =
         [ withItemTitle    (rssItemTitle ri)
-	, withItemLink     (rssLink ri)
-	, withDescription  (rssDescription ri)
-	, \ inp -> mb (\ la -> inp{feedLanguage=...}) (rssLanguage ri)
-	, \ inp -> mb (\ ed -> inp{feedAuthors=[nullPerson{personName=ed}]})
-	    	      (rssEditor ri)
-	, \ inp -> mb (\ ed -> inp{feedAuthors=[nullPerson{personName=ed}]})
-	    	      (rssWebMaster ri)
-	, \ inp -> mb (\ pu -> withPubDate)
-	              (rssPubDate ri)
-	, \ inp -> mb withLastUpdate
-	    	      (rssLastUpdate ri)
-	, \ inp -> withCategories (map (\c -> (RSS.rssCategoryValue c, RSS.rssCategoryDomain c))
-	    	   		       (rssCategories ri)) inp
-	, \ inp -> mb withGenerator
-	    	      (rssGenerator ri)
-	, rssDocs
-	, rssCloud
-	, rssTTL
-	, rssImage
-	, rssRating
-	, rssTextInput
-	, rssSkipHours
-	, rssSkipDays
-	}
+        , withItemLink     (rssLink ri)
+        , withDescription  (rssDescription ri)
+        , \ inp -> mb (\ la -> inp{feedLanguage=...}) (rssLanguage ri)
+        , \ inp -> mb (\ ed -> inp{feedAuthors=[nullPerson{personName=ed}]})
+                      (rssEditor ri)
+        , \ inp -> mb (\ ed -> inp{feedAuthors=[nullPerson{personName=ed}]})
+                      (rssWebMaster ri)
+        , \ inp -> mb (\ pu -> withPubDate)
+                      (rssPubDate ri)
+        , \ inp -> mb withLastUpdate
+                      (rssLastUpdate ri)
+        , \ inp -> withCategories (map (\c -> (RSS.rssCategoryValue c, RSS.rssCategoryDomain c))
+                                       (rssCategories ri)) inp
+        , \ inp -> mb withGenerator
+                      (rssGenerator ri)
+        , rssDocs
+        , rssCloud
+        , rssTTL
+        , rssImage
+        , rssRating
+        , rssTextInput
+        , rssSkipHours
+        , rssSkipDays
+        }
       in
 -}

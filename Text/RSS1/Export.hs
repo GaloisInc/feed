@@ -1,11 +1,23 @@
-module RSS1.Export 
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.RSS1.Export
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
+
+module Text.RSS1.Export
        ( xmlFeed
        ) where
 
 import Text.XML.Light as XML
-import RSS1.Syntax
-import RSS1.Utils
-import DublinCore.Types
+import Text.RSS1.Syntax
+import Text.RSS1.Utils
+import Text.DublinCore.Types
 
 import Data.List
 import Data.Maybe
@@ -36,7 +48,7 @@ xmlFeed f =
                     Attr (qualName (Nothing,Just "xmlns") (fromJust taxPrefix)) (fromJust taxNS) : 
                     Attr (qualName (Nothing,Just "xmlns") (fromJust conPrefix)) (fromJust conNS) : 
                     Attr (qualName (Nothing,Just "xmlns") (fromJust dcPrefix))  (fromJust dcNS)  : 
-		    feedAttrs f}
+                    feedAttrs f}
 
 xmlChannel :: Channel -> XML.Element
 xmlChannel ch = 
@@ -50,13 +62,13 @@ xmlChannel ch =
       xmlItemURIs (channelItemURIs ch) ++ map xmlDC (channelDC ch) ++
       concat [ mb xmlUpdatePeriod (channelUpdatePeriod ch)
              , mb xmlUpdateFreq   (channelUpdateFreq ch)
-	     , mb (xmlLeaf (synNS,synPrefix) "updateBase")   (channelUpdateBase ch)
-	     ] ++ 
+             , mb (xmlLeaf (synNS,synPrefix) "updateBase")   (channelUpdateBase ch)
+             ] ++ 
       xmlContentItems (channelContent ch) ++
       xmlTopics       (channelTopics ch) ++
       channelOther ch))
     { elAttribs = ( Attr (qualName  (rdfNS,rdfPrefix) "about") (channelURI ch) :
-		    channelAttrs ch)}
+                    channelAttrs ch)}
 
 xmlImageURI :: URIString -> XML.Element
 xmlImageURI u = xmlEmpty (rss10NS,Nothing) "image" [Attr (rdfName "resource") u ]
@@ -70,7 +82,7 @@ xmlImage i =
      ] ++ map xmlDC (imageDC i) ++
      imageOther i))
     { elAttribs = ( Attr (qualName  (rdfNS,rdfPrefix) "about") (imageURI i) :
-		    imageAttrs i)}
+                    imageAttrs i)}
 
 xmlItemURIs :: [URIString] -> [XML.Element]
 xmlItemURIs [] = []
@@ -117,7 +129,7 @@ xmlContentItems xs =
   [qualNode (conNS,conPrefix) "items" 
     [Elem $ qualNode (rdfNS,rdfPrefix) "Bag"
               (map (\ e -> Elem (qualNode (rdfNS,rdfPrefix) "li" [Elem (xmlContentInfo e)])) 
-	           xs)]]
+                   xs)]]
 
 xmlContentInfo :: ContentInfo -> XML.Element
 xmlContentInfo ci = 
@@ -164,13 +176,13 @@ xmlItem i =
      map xmlContentInfo (itemContent i) ++
      itemOther i))
     { elAttribs = ( Attr (qualName  (rdfNS,rdfPrefix) "about") (itemURI i) :
-		    itemAttrs i)}
+                    itemAttrs i)}
 
 xmlLeaf :: (Maybe String,Maybe String) -> String -> String -> XML.Element
 xmlLeaf ns tg txt = 
  blank_element{ elName = qualName ns tg
- 	      , elContent = [ Text blank_cdata { cdData = txt } ]
-	      }
+              , elContent = [ Text blank_cdata { cdData = txt } ]
+              }
 
 xmlEmpty :: (Maybe String,Maybe String) -> String -> [XML.Attr] -> XML.Element
 xmlEmpty ns t as = (qualNode ns t []){elAttribs=as}

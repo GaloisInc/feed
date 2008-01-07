@@ -1,4 +1,17 @@
-module RSS.Syntax where
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.RSS.Syntax
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
+
+
+module Text.RSS.Syntax where
 
 import Text.XML.Light as XML
 

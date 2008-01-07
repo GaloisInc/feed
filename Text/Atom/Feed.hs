@@ -1,4 +1,16 @@
-module Atom.Feed where
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.Atom.Feed
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
+
+module Text.Atom.Feed where
 
 import qualified Text.XML.Light as XML
 

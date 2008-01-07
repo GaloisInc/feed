@@ -1,8 +1,8 @@
 module Main where
 
 import Text.XML.Light
-import Feed.Import
-import Feed.Export
+import Text.Feed.Import
+import Text.Feed.Export
 
 import System.Environment
 

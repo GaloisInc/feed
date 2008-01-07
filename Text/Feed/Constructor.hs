@@ -1,4 +1,16 @@
-module Feed.Constructor 
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.Feed.Constructor
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
+
+module Text.Feed.Constructor
        ( FeedKind(..)
        , newFeed         -- :: FeedKind -> Feed
        , getFeedKind     -- :: Feed     -> FeedKind
@@ -24,12 +36,12 @@ module Feed.Constructor
        , withItemRights       -- :: String     -> Item -> Item
        ) where
 
-import Feed.Types
+import Text.Feed.Types      as Feed.Types
 
-import Atom.Feed as Atom
-import RSS.Syntax as RSS
-import RSS1.Syntax as RSS1
-import DublinCore.Types
+import Text.Atom.Feed       as Atom
+import Text.RSS.Syntax      as RSS
+import Text.RSS1.Syntax     as RSS1
+import Text.DublinCore.Types
 import Text.XML.Light as XML
 
 import Data.Maybe ( fromMaybe, mapMaybe )
@@ -41,8 +53,8 @@ newFeed :: FeedKind -> Feed.Types.Feed
 newFeed fk = 
   case fk of
     AtomKind -> AtomFeed (Atom.nullFeed "feed-id-not-filled-in"
-			                (TextString "dummy-title")
-				        "dummy-and-bogus-update-date")
+                                        (TextString "dummy-title")
+                                        "dummy-and-bogus-update-date")
     RSSKind mbV -> 
       let def = (RSS.nullRSS "dummy-title" "default-channel-url") in
       RSSFeed $ fromMaybe def $ fmap (\ v -> def{RSS.rssVersion=v}) mbV
@@ -67,8 +79,8 @@ addItem it f =
     (Feed.Types.RSSItem e, Feed.Types.RSSFeed r) -> 
        Feed.Types.RSSFeed r{RSS.rssChannel=(RSS.rssChannel r){RSS.rssItems=e:RSS.rssItems (RSS.rssChannel r)}}
     (Feed.Types.RSS1Item e, Feed.Types.RSS1Feed r) -> 
-    	 -- note: do not update the channel item URIs at this point;
-	 -- will delay doing so until serialization.
+         -- note: do not update the channel item URIs at this point;
+         -- will delay doing so until serialization.
        Feed.Types.RSS1Feed r{RSS1.feedItems=e:RSS1.feedItems r}
     _ -> error "addItem: currently unable to automatically convert items from one feed type to another"
 
@@ -78,13 +90,13 @@ newItem fk =
     AtomKind -> 
                Feed.Types.AtomItem (Atom.nullEntry "entry-id-not-filled-in"
                                                     (TextString "dummy-entry-title")
-						    "dummy-and-bogus-entry-update-date")
+                                                    "dummy-and-bogus-entry-update-date")
     RSSKind{} -> 
-    	       Feed.Types.RSSItem (RSS.nullItem "dummy-rss-item-title")
+               Feed.Types.RSSItem (RSS.nullItem "dummy-rss-item-title")
     RDFKind{} -> 
                Feed.Types.RSS1Item (RSS1.nullItem "dummy-item-uri"
-						  "dummy-item-title"
-						  "dummy-item-link")
+                                                  "dummy-item-title"
+                                                  "dummy-item-link")
 
 getItemKind :: Feed.Types.Item -> FeedKind
 getItemKind f = 
@@ -120,8 +132,8 @@ withItemDate dt fi =
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
         addChild (node (unqual "pubDate", dt)) $
-	    filterChildren (\ e -> elName e /= unqual "pubDate")
-	                   i
+            filterChildren (\ e -> elName e /= unqual "pubDate")
+                           i
  where
   isDate dc  = dcElt dc == DC_Date
 
@@ -142,8 +154,8 @@ withItemTitle tit fi =
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
         addChild (node (unqual "title",tit)) $
-	    filterChildren (\ e -> elName e /= unqual "title")
-	                   i
+            filterChildren (\ e -> elName e /= unqual "title")
+                           i
 
 -- | 'withItemAuthor auStr' associates new author info
 -- with a feed item.
@@ -161,8 +173,8 @@ withItemAuthor au fi =
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
         addChild (node (unqual "author",au)) $
-	    filterChildren (\ e -> elName e /= unqual "author")
-	                   i
+            filterChildren (\ e -> elName e /= unqual "author")
+                           i
  where
   isAuthor dc  = dcElt dc == DC_Creator
 
@@ -180,8 +192,8 @@ withItemFeedLink tit url fi =
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
         addChild (node (unqual "source",Attr (unqual "url") url,tit)) $
-	    filterChildren (\ e -> elName e /= unqual "source")
-	                   i
+            filterChildren (\ e -> elName e /= unqual "source")
+                           i
 
 
 
@@ -200,8 +212,8 @@ withItemCommentLink url fi =
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
         addChild (node (unqual "comments",url)) $
-	    filterChildren (\ e -> elName e /= unqual "comments")
-	                   i
+            filterChildren (\ e -> elName e /= unqual "comments")
+                           i
  where
   isRel dc  = dcElt dc == DC_Relation
 
@@ -211,23 +223,23 @@ withItemEnclosure url ty len fi =
   case fi of
     Feed.Types.AtomItem e -> Feed.Types.AtomItem 
        e{Atom.entryLinks=((nullLink url){linkRel=Just (Left "enclosure")
-       				        ,linkType=ty
-					,linkLength=Just (show len)
-					}):Atom.entryLinks e}
+                                        ,linkType=ty
+                                        ,linkLength=Just (show len)
+                                        }):Atom.entryLinks e}
     Feed.Types.RSSItem i  ->
       Feed.Types.RSSItem  i{RSS.rssItemEnclosure=Just (nullEnclosure url len (fromMaybe "text/html" ty))}
     Feed.Types.RSS1Item i -> Feed.Types.RSS1Item 
           i{RSS1.itemContent=nullContentInfo{ contentURI=Just url
-					    , contentFormat=ty
-					    }:RSS1.itemContent i}
+                                            , contentFormat=ty
+                                            }:RSS1.itemContent i}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
         addChild ((node (unqual "enclosure",url))
-	  {elAttribs= [ Attr (unqual "length") "0"
-	  	      , Attr (unqual "type") (fromMaybe "text/html" ty)
-		      ]}) $
-	    filterChildren (\ e -> elName e /= unqual "enclosure")
-	                   i
+          {elAttribs= [ Attr (unqual "length") "0"
+                      , Attr (unqual "type") (fromMaybe "text/html" ty)
+                      ]}) $
+            filterChildren (\ e -> elName e /= unqual "enclosure")
+                           i
 
 
 -- | 'withItemId isURL id' associates new unique identifier with a feed item.
@@ -246,8 +258,8 @@ withItemId isURL idS fi =
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
         addChild (node (unqual "guid",Attr (unqual "isPermaLink") (showBool isURL),idS)) $
-	    filterChildren (\ e -> elName e /= unqual "guid")
-	                   i
+            filterChildren (\ e -> elName e /= unqual "guid")
+                           i
  where
   showBool x  = map toLower (show x)
   isId dc     = dcElt dc == DC_Identifier
@@ -266,8 +278,8 @@ withItemDescription desc fi =
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
         addChild (node (unqual "description",desc)) $
-	    filterChildren (\ e -> elName e /= unqual "description")
-	                   i
+            filterChildren (\ e -> elName e /= unqual "description")
+                           i
 
 -- | 'withItemRights rightStr' associates the rights information 'rightStr'
 -- with a feed item.
@@ -304,8 +316,8 @@ withItemLink url fi =
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
         addChild (node (unqual "link", url)) $
-	    filterChildren (\ e -> elName e /= unqual "link")
-	                   i
+            filterChildren (\ e -> elName e /= unqual "link")
+                           i
  where
   replaceAlternate _ [] = []
   replaceAlternate x (lr:xs) 
@@ -317,31 +329,31 @@ withItemLink url fi =
   toStr (Just (Right x)) = x
     
 withItemCategories :: [(String,Maybe String)]
-	           -> Feed.Types.Item
-	           -> Feed.Types.Item
+                   -> Feed.Types.Item
+                   -> Feed.Types.Item
 withItemCategories cats fi = 
   case fi of
     Feed.Types.AtomItem e -> Feed.Types.AtomItem 
         e{ Atom.entryCategories =
-	        map ( \ (t,mb) -> (Atom.newCategory t){Atom.catScheme=mb})
+                map ( \ (t,mb) -> (Atom.newCategory t){Atom.catScheme=mb})
                     cats ++ entryCategories e}
     Feed.Types.RSSItem i  -> Feed.Types.RSSItem 
         i{RSS.rssItemCategories=
               map (\ (t,mb) -> (RSS.newCategory t){RSS.rssCategoryDomain=mb})
-		  cats ++ rssItemCategories i}
+                  cats ++ rssItemCategories i}
     Feed.Types.RSS1Item i -> Feed.Types.RSS1Item 
          i{RSS1.itemDC=
-	        map (\ (t,_) -> DCItem{dcElt=DC_Subject,dcText=t})
-	            cats ++ RSS1.itemDC i}
+                map (\ (t,_) -> DCItem{dcElt=DC_Subject,dcText=t})
+                    cats ++ RSS1.itemDC i}
     Feed.Types.XMLItem i  -> Feed.Types.XMLItem $
          foldr (\ (t,mb) acc -> 
-	          addChild (node ( unqual "category"
-		                 , (fromMaybe (\x -> [x])
-		                             (fmap (\v -> (\ x -> [Attr (unqual "domain") v,x])) mb) $
-					     (Attr (unqual "term") t))
-			         )) acc)
+                  addChild (node ( unqual "category"
+                                 , (fromMaybe (\x -> [x])
+                                             (fmap (\v -> (\ x -> [Attr (unqual "domain") v,x])) mb) $
+                                             (Attr (unqual "term") t))
+                                 )) acc)
                i
-	       cats
+               cats
 
 -- helpers..
 

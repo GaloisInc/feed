@@ -1,8 +1,20 @@
-module RSS1.Utils where
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.RSS1.Utils
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
+
+module Text.RSS1.Utils where
 
 import Text.XML.Light      as XML
 import Text.XML.Light.Proc as XML
-import DublinCore.Types
+import Text.DublinCore.Types
 
 import Data.Maybe (listToMaybe, mapMaybe)
 

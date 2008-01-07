@@ -1,13 +1,25 @@
-module Feed.Import 
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.Feed.Import
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
+
+module Text.Feed.Import
         ( parseFeedFromFile -- :: FilePath -> IO Feed
-	, parseFeedString   -- :: String -> IO Feed
-	) where
+        , parseFeedString   -- :: String -> IO Feed
+        ) where
 
-import Atom.Feed.Import as Atom
-import RSS.Import       as RSS
-import RSS1.Import      as RSS1
+import Text.Atom.Feed.Import as Atom
+import Text.RSS.Import       as RSS
+import Text.RSS1.Import      as RSS1
 
-import Feed.Types
+import Text.Feed.Types
 import Text.XML.Light as XML
 
 import Control.Monad
@@ -20,16 +32,15 @@ parseFeedFromFile fp = do
     Just f  -> return f
 
 parseFeedString :: String -> Maybe Feed
-parseFeedString str = 
+parseFeedString str =
   case parseXMLDoc str of
     Nothing -> Nothing
-    Just e  -> 
-      readAtom e `mplus` 
-      readRSS1 e `mplus` 
-      readRSS2 e `mplus` 
+    Just e  ->
+      readAtom e `mplus`
+      readRSS1 e `mplus`
+      readRSS2 e `mplus`
       Just (XMLFeed e)
-    
-   
+
 readRSS2 :: XML.Element -> Maybe Feed
 readRSS2 e = fmap RSSFeed  $ RSS.elementToRSS e
 

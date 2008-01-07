@@ -1,19 +1,32 @@
-module Feed.Query 
-       ( Feed.Query.feedItems -- :: Feed.Feed -> [Feed.Item]
+--------------------------------------------------------------------
+-- |
+-- Module    : 
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
+
+
+module Text.Feed.Query 
+       ( Text.Feed.Query.feedItems -- :: Feed.Feed -> [Feed.Item]
        , getCategories        -- :: Feed.Item -> [String]
        , getPublishDate       -- :: Feed.Item -> Maybe String
        , getLink              -- :: Feed.Item -> Maybe String
-       , getTitle	      -- :: Feed.Item -> Maybe String
+       , getTitle             -- :: Feed.Item -> Maybe String
        ) where
 
-import Feed.Types as Feed
+import Text.Feed.Types as Feed
 
-import RSS.Syntax  as RSS
-import Atom.Feed   as Atom
-import RSS1.Syntax as RSS1
+import Text.RSS.Syntax  as RSS
+import Text.Atom.Feed   as Atom
+import Text.RSS1.Syntax as RSS1
 import Text.XML.Light as XML
 
-import DublinCore.Types
+import Text.DublinCore.Types
 
 import Data.List
 --import Debug.Trace
@@ -26,7 +39,7 @@ feedItems fe =
     RSS1Feed f -> map Feed.RSS1Item (RSS1.feedItems f)
      -- ToDo: look for 'entry' elements if 'items' are missing..
     XMLFeed f  -> map Feed.XMLItem $ XML.findElements (XML.unqual "item") f
-    
+
 getCategories :: Feed.Item -> [String]
 getCategories it = 
   case it of
@@ -46,7 +59,7 @@ getLink it =
        -- look up the 'alternate' HTML link relation on the entry:
        case filter isSelf $ Atom.entryLinks i of
          (l:_) -> Just (Atom.linkHref l)
-	 _ -> Nothing
+         _ -> Nothing
     Feed.RSSItem i  -> RSS.rssItemLink i
     Feed.RSS1Item i -> Just (RSS1.itemLink i)
     Feed.XMLItem i  -> fmap (\ ei -> XML.strContent ei) $ findElement (unqual "link") i

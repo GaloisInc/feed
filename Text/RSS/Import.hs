@@ -1,6 +1,18 @@
-module RSS.Import where
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.RSS.Import
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
 
-import RSS.Syntax
+module Text.RSS.Import where
+
+import Text.RSS.Syntax
 import Text.XML.Light as XML
 
 import Data.Maybe (listToMaybe, mapMaybe)

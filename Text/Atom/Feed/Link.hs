@@ -1,10 +1,20 @@
-module Atom.Feed.Link 
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.Atom.Feed.Link
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
+
+module Text.Atom.Feed.Link
        ( LinkRelation(..)
        , showLinkRelation
        , showLinkAttr
        ) where
-       
-import Data.List ( concatMap )       
 
 -- | Atom feeds uses typed IRI links to represent
 -- information \/ metadata that is of interest to the
@@ -25,12 +35,12 @@ data LinkRelation               -- relevant RFC:
  | LinkEnclosure                -- http://www.rfc-editor.org/rfc/rfc4287.txt
  | LinkEdit                     -- http://www.rfc-editor.org/rfc/rfc5023.txt
  | LinkEditMedia                -- http://www.rfc-editor.org/rfc/rfc5023.txt
- | LinkFirst			-- http://www.iana.org/assignments/link-relations/first
- | LinkLast			-- http://www.iana.org/assignments/link-relations/last
+ | LinkFirst                    -- http://www.iana.org/assignments/link-relations/first
+ | LinkLast                     -- http://www.iana.org/assignments/link-relations/last
  | LinkLicense                  -- http://www.rfc-editor.org/rfc/rfc4946.txt
  | LinkNext                     -- http://www.rfc-editor.org/rfc/rfc5005.txt
  | LinkNextArchive              -- http://www.rfc-editor.org/rfc/rfc5005.txt
- | LinkPayment			-- http://www.iana.org/assignments/link-relations/payment
+ | LinkPayment                  -- http://www.iana.org/assignments/link-relations/payment
  | LinkPrevArchive              -- http://www.rfc-editor.org/rfc/rfc5005.txt
  | LinkPrevious                 -- http://www.rfc-editor.org/rfc/rfc5005.txt
  | LinkRelated                  -- http://www.rfc-editor.org/rfc/rfc4287.txt

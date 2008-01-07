@@ -1,7 +1,21 @@
-module Atom.Feed.Export where
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.Atom.Feed.Export
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
+
+
+module Text.Atom.Feed.Export where
 
 import Text.XML.Light as XML
-import Atom.Feed
+import Text.Atom.Feed
+
 import Data.List
 import Data.Maybe
 

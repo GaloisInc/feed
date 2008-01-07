@@ -1,7 +1,20 @@
-module RSS.Export where
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.RSS.Export
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
+
+
+module Text.RSS.Export where
 
 import Text.XML.Light as XML
-import RSS.Syntax
+import Text.RSS.Syntax
 
 import Data.List
 import Data.Maybe

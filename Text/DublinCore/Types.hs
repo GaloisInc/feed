@@ -1,15 +1,28 @@
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.DublinCore.Types
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
 --
--- Representing the DublinCore metadata elements in Haskell
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
+--
+-- Representing the DublinCore metadata elements in Haskell. The Dublin
+-- Core Metadata Element Set. See: <http://dublincore.org/>
 -- 
-module DublinCore.Types where
+module Text.DublinCore.Types where
 
+-- | A DCItem
 data DCItem
  = DCItem
      { dcElt  :: DCInfo
      , dcText :: String
      }
 
--- The Dublin Core Metadata Element Set, all 15 of them (plus an extension constructor.)
+-- | The Dublin Core Metadata Element Set, all 15 of them (plus an extension constructor.)
 data DCInfo
  = DC_Title         -- ^ A name given to the resource.
  | DC_Creator       -- ^ An entity primarily responsible for making the content of the resource.
@@ -24,13 +37,13 @@ data DCInfo
  | DC_Source        -- ^ A Reference to a resource from which the present resource is derived.
  | DC_Language      -- ^ A language of the intellectual content of the resource.
  | DC_Relation      -- ^ A reference to a related resource.
- | DC_Coverage	    -- ^ The extent or scope of the content of the resource.
+ | DC_Coverage      -- ^ The extent or scope of the content of the resource.
  | DC_Rights        -- ^ Information about rights held in and over the resource.
  | DC_Other String  -- ^ Other; data type extension mechanism.
    deriving ( Eq )
 
 infoToTag :: DCInfo -> String
-infoToTag i = 
+infoToTag i =
   case i of
     DC_Title       -> "title"
     DC_Creator     -> "creator"
@@ -48,10 +61,9 @@ infoToTag i =
     DC_Coverage    -> "coverage"
     DC_Rights      -> "rights"
     DC_Other o     -> o
-    
 
 dc_element_names :: [String]
-dc_element_names 
+dc_element_names
  = [ "title"
    , "creator"
    , "subject"

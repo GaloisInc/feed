@@ -1,12 +1,23 @@
-module Atom.Feed.Import where
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.Atom.Feed.Import
+-- Copyright : (c) Galois, Inc. 2007-2008
+-- License   : BSD3
+--
+-- Maintainer: Don Stewart <dons@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
+
+module Text.Atom.Feed.Import where
 
 import Data.Maybe (listToMaybe, mapMaybe)
 import Control.Monad (guard)
 
-import Atom.Feed
-import Atom.Feed.Export (atomName, atomThreadName)
+import Text.Atom.Feed
+import Text.Atom.Feed.Export (atomName, atomThreadName)
 import Text.XML.Light as XML
-
 
 pNodes       :: String -> [XML.Element] -> [XML.Element]
 pNodes x es   = filter ((atomName x ==) . elName) es
