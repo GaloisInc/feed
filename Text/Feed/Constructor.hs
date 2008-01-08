@@ -12,12 +12,17 @@
 
 module Text.Feed.Constructor
        ( FeedKind(..)
-       , newFeed         -- :: FeedKind -> Feed
-       , getFeedKind     -- :: Feed     -> FeedKind
-       , addItem         -- :: Item -> Feed -> Feed
-       , withFeedTitle   -- :: String -> Feed -> Feed
-       , withFeedHome    -- :: URLString -> Feed -> Feed
-       , withFeedHTML    -- :: URLString -> Feed -> Feed
+       , newFeed             -- :: FeedKind  -> Feed
+       , getFeedKind         -- :: Feed      -> FeedKind
+       , FeedSetter          -- type _ a = a -> Feed -> Feed
+
+       , addItem             -- :: FeedSetter Item
+       , withFeedTitle       -- :: FeedSetter String
+       , withFeedHome        -- :: FeedSetter URLString
+       , withFeedHTML        -- :: FeedSetter URLString
+       , withFeedDescription -- :: FeedSetter String
+       , withFeedPubDate     -- :: FeedSetter DateString
+       , withFeedLogoLink    -- :: FeedSetter URLString
        
 
        , newItem              -- :: FeedKind   -> Item
@@ -50,6 +55,14 @@ import Text.XML.Light as XML
 
 import Data.Maybe ( fromMaybe, mapMaybe )
 import Data.Char  ( toLower )
+
+-- ToDo:
+--
+--  - complete set of constructors over feeds
+--  - provide a unified treatment of date string reps.
+--    (i.e., I know they differ across formats, but ignorant what
+--    the constraints are at the moment.)
+
 
 -- | Construct an empty feed document, intending to output it in 
 -- the 'fk' feed format.
@@ -110,7 +123,9 @@ getItemKind f =
     Feed.Types.RSS1Item{} -> RDFKind (Just "1.0")
     Feed.Types.XMLItem{}  -> RSSKind (Just "2.0")
 
-withFeedTitle :: String -> Feed.Types.Feed -> Feed.Types.Feed
+type FeedSetter a = a -> Feed.Types.Feed -> Feed.Types.Feed
+
+withFeedTitle :: FeedSetter String
 withFeedTitle tit fe = 
   case fe of
    Feed.Types.AtomFeed f -> Feed.Types.AtomFeed f{feedTitle=TextString tit}
@@ -125,7 +140,7 @@ withFeedTitle tit fe =
 			 else Nothing) e)
 	 else Nothing) f
 
-withFeedHome :: URLString -> Feed.Types.Feed -> Feed.Types.Feed
+withFeedHome :: FeedSetter URLString
 withFeedHome url fe = 
   case fe of
    Feed.Types.AtomFeed f -> Feed.Types.AtomFeed f{feedLinks=newSelf:Atom.feedLinks f}
@@ -147,7 +162,9 @@ withFeedHome url fe =
                           , linkType=Just "application/atom+xml" 
 			  }
 
-withFeedHTML :: URLString -> Feed.Types.Feed -> Feed.Types.Feed
+-- | 'withFeedHTML' sets the URL where an HTML version of the
+-- feed is published.
+withFeedHTML :: FeedSetter URLString
 withFeedHTML url fe = 
   case fe of
    Feed.Types.AtomFeed f -> Feed.Types.AtomFeed f{feedLinks=newAlt:Atom.feedLinks f}
@@ -164,6 +181,96 @@ withFeedHTML url fe =
  where
   newAlt = (nullLink url){ linkRel=Just (Left "alternate")
                           , linkType=Just "text/html" 
+			  }
+
+-- | 'withFeedHTML' sets the URL where an HTML version of the
+-- feed is published.
+withFeedDescription :: FeedSetter String
+withFeedDescription desc fe = 
+  case fe of
+   Feed.Types.AtomFeed f -> Feed.Types.AtomFeed 
+      f{feedSubtitle=Just (TextString desc)}
+   Feed.Types.RSSFeed  f -> Feed.Types.RSSFeed  
+      f{rssChannel=(rssChannel f){rssDescription=desc}}
+   Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed 
+      f{feedChannel=(feedChannel f){channelDesc=desc}}
+   Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
+      mapMaybeChildren (\ e -> 
+        if (elName e == unqual "channel")
+	 then Just (mapMaybeChildren (\ e2 -> 
+	                if (elName e2 == unqual "description")
+			 then Just (node (unqual "description",desc))
+			 else Nothing) e)
+	 else Nothing) f
+
+withFeedPubDate :: FeedSetter String
+withFeedPubDate dateStr fe = 
+  case fe of
+   Feed.Types.AtomFeed f -> Feed.Types.AtomFeed 
+      f{feedUpdated=dateStr}
+   Feed.Types.RSSFeed  f -> Feed.Types.RSSFeed  
+      f{rssChannel=(rssChannel f){rssPubDate=Just dateStr}}
+   Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed $
+      case break isDate $ RSS1.channelDC (RSS1.feedChannel f) of
+       (as,(dci:bs)) -> 
+         f{RSS1.feedChannel=
+           (RSS1.feedChannel f)
+	     {RSS1.channelDC=as++dci{dcText=dateStr}:bs}}
+       (_,[]) -> 
+         f{RSS1.feedChannel=
+           (RSS1.feedChannel f)
+	     {RSS1.channelDC=
+	        DCItem{dcElt=DC_Date,dcText=dateStr}:
+		  RSS1.channelDC (RSS1.feedChannel f)}}
+   Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
+      mapMaybeChildren (\ e -> 
+        if (elName e == unqual "channel")
+	 then Just (mapMaybeChildren (\ e2 -> 
+	                if (elName e2 == unqual "pubDate")
+			 then Just (node (unqual "pubDate",dateStr))
+			 else Nothing) e)
+	 else Nothing) f
+ where
+  isDate dc  = dcElt dc == DC_Date
+
+withFeedLogoLink :: URLString -> FeedSetter URLString
+withFeedLogoLink imgURL lnk fe = 
+  case fe of
+   Feed.Types.AtomFeed f -> Feed.Types.AtomFeed 
+      f{ feedLogo  = Just imgURL
+       , feedLinks = newSelf:Atom.feedLinks f
+       }
+   Feed.Types.RSSFeed  f -> Feed.Types.RSSFeed  
+      f{ rssChannel=(rssChannel f)
+         {rssImage=Just $ 
+	    RSS.nullImage imgURL (rssTitle (rssChannel f)) lnk}}
+   Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed $
+      f{ feedImage   = Just $
+            RSS1.nullImage imgURL (RSS1.channelTitle (RSS1.feedChannel f)) lnk
+       , feedChannel =
+          (feedChannel f){channelImageURI=Just imgURL}
+       }
+   Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
+      mapMaybeChildren (\ e -> 
+        if (elName e == unqual "channel")
+	 then Just (mapMaybeChildren (\ e2 -> 
+	                if (elName e2 == unqual "image")
+			 then Just (node (unqual "image",[ node (unqual "url",imgURL)
+                                                         , node (unqual "title",title)
+                                                         , node (unqual "link",lnk)
+							 ]))
+			 else Nothing) e)
+	 else Nothing) f
+     where
+      title = 
+       case fmap (findChild (unqual "title"))
+                 (findChild (unqual "channel") f) of
+         Just (Just e1) -> strContent e1
+	 _ -> "feed_title" -- shouldn't happen..
+
+ where
+  newSelf = (nullLink lnk){ linkRel=Just (Left "self")
+                          , linkType=Just "application/atom+xml" 
 			  }
 
 
