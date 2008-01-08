@@ -15,6 +15,10 @@ module Text.Feed.Constructor
        , newFeed         -- :: FeedKind -> Feed
        , getFeedKind     -- :: Feed     -> FeedKind
        , addItem         -- :: Item -> Feed -> Feed
+       , withFeedTitle   -- :: String -> Feed -> Feed
+       , withFeedHome    -- :: URLString -> Feed -> Feed
+       , withFeedHTML    -- :: URLString -> Feed -> Feed
+       
 
        , newItem              -- :: FeedKind   -> Item
        , getItemKind          -- :: Item       -> FeedKind
@@ -87,16 +91,16 @@ addItem it f =
 newItem :: FeedKind -> Feed.Types.Item
 newItem fk = 
   case fk of
-    AtomKind -> 
-               Feed.Types.AtomItem (Atom.nullEntry "entry-id-not-filled-in"
-                                                    (TextString "dummy-entry-title")
-                                                    "dummy-and-bogus-entry-update-date")
-    RSSKind{} -> 
-               Feed.Types.RSSItem (RSS.nullItem "dummy-rss-item-title")
-    RDFKind{} -> 
-               Feed.Types.RSS1Item (RSS1.nullItem "dummy-item-uri"
-                                                  "dummy-item-title"
-                                                  "dummy-item-link")
+    AtomKind  -> Feed.Types.AtomItem $
+      Atom.nullEntry "entry-id-not-filled-in"
+                     (TextString "dummy-entry-title")
+                     "dummy-and-bogus-entry-update-date"
+    RSSKind{} -> Feed.Types.RSSItem $
+      RSS.nullItem "dummy-rss-item-title"
+    RDFKind{} -> Feed.Types.RSS1Item $
+      RSS1.nullItem "dummy-item-uri"
+                    "dummy-item-title"
+                    "dummy-item-link"
 
 getItemKind :: Feed.Types.Item -> FeedKind
 getItemKind f = 
@@ -105,6 +109,65 @@ getItemKind f =
     Feed.Types.RSSItem{}  -> RSSKind (Just "2.0") -- good guess..
     Feed.Types.RSS1Item{} -> RDFKind (Just "1.0")
     Feed.Types.XMLItem{}  -> RSSKind (Just "2.0")
+
+withFeedTitle :: String -> Feed.Types.Feed -> Feed.Types.Feed
+withFeedTitle tit fe = 
+  case fe of
+   Feed.Types.AtomFeed f -> Feed.Types.AtomFeed f{feedTitle=TextString tit}
+   Feed.Types.RSSFeed  f -> Feed.Types.RSSFeed  f{rssChannel=(rssChannel f){rssTitle=tit}}
+   Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed f{feedChannel=(feedChannel f){channelTitle=tit}}
+   Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
+      mapMaybeChildren (\ e -> 
+        if (elName e == unqual "channel")
+	 then Just (mapMaybeChildren (\ e2 -> 
+	                if (elName e2 == unqual "title")
+			 then Just (node (unqual "title",tit))
+			 else Nothing) e)
+	 else Nothing) f
+
+withFeedHome :: URLString -> Feed.Types.Feed -> Feed.Types.Feed
+withFeedHome url fe = 
+  case fe of
+   Feed.Types.AtomFeed f -> Feed.Types.AtomFeed f{feedLinks=newSelf:Atom.feedLinks f}
+      -- ToDo: fix, the <link> element is for the HTML home of the channel, not the
+      -- location of the feed itself. Struggling to find if there is a common way
+      -- to represent this outside of RSS 2.0 standard elements..
+   Feed.Types.RSSFeed  f -> Feed.Types.RSSFeed  f{rssChannel=(rssChannel f){rssLink=url}}
+   Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed f{feedChannel=(feedChannel f){channelURI=url}}
+   Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
+      mapMaybeChildren (\ e -> 
+        if (elName e == unqual "channel")
+	 then Just (mapMaybeChildren (\ e2 -> 
+	                if (elName e2 == unqual "link")
+			 then Just (node (unqual "link",url))
+			 else Nothing) e)
+	 else Nothing) f
+ where
+  newSelf = (nullLink url){ linkRel=Just (Left "self")
+                          , linkType=Just "application/atom+xml" 
+			  }
+
+withFeedHTML :: URLString -> Feed.Types.Feed -> Feed.Types.Feed
+withFeedHTML url fe = 
+  case fe of
+   Feed.Types.AtomFeed f -> Feed.Types.AtomFeed f{feedLinks=newAlt:Atom.feedLinks f}
+   Feed.Types.RSSFeed  f -> Feed.Types.RSSFeed  f{rssChannel=(rssChannel f){rssLink=url}}
+   Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed f{feedChannel=(feedChannel f){channelLink=url}}
+   Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
+      mapMaybeChildren (\ e -> 
+        if (elName e == unqual "channel")
+	 then Just (mapMaybeChildren (\ e2 -> 
+	                if (elName e2 == unqual "link")
+			 then Just (node (unqual "link",url))
+			 else Nothing) e)
+	 else Nothing) f
+ where
+  newAlt = (nullLink url){ linkRel=Just (Left "alternate")
+                          , linkType=Just "text/html" 
+			  }
+
+
+-- Item constructors (all the way to the end):
 
 atomEntryToItem :: Atom.Entry -> Feed.Types.Item
 atomEntryToItem e = Feed.Types.AtomItem e
@@ -371,3 +434,16 @@ filterChildren pre e =
 addChild :: XML.Element -> XML.Element -> XML.Element
 addChild a b = b { elContent = XML.Elem a : elContent b }
 
+mapMaybeChildren :: (XML.Element -> Maybe XML.Element)
+                 -> XML.Element
+		 -> XML.Element
+mapMaybeChildren f e = 
+  case elContent e of
+    [] -> e
+    cs -> e { elContent = map procElt cs }
+ where
+   procElt xe@(XML.Elem el) =
+     case f el of
+       Nothing  -> xe
+       Just el1 -> XML.Elem el1
+   procElt xe = xe
