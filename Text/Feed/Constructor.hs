@@ -23,6 +23,7 @@ module Text.Feed.Constructor
        , withFeedDescription -- :: FeedSetter String
        , withFeedPubDate     -- :: FeedSetter DateString
        , withFeedLogoLink    -- :: FeedSetter URLString
+       , withFeedLanguage    -- :: FeedSetter String
        
 
        , newItem              -- :: FeedKind   -> Item
@@ -272,6 +273,37 @@ withFeedLogoLink imgURL lnk fe =
   newSelf = (nullLink lnk){ linkRel=Just (Left "self")
                           , linkType=Just "application/atom+xml" 
 			  }
+
+
+withFeedLanguage :: FeedSetter String
+withFeedLanguage lang fe = 
+  case fe of
+   Feed.Types.AtomFeed f -> Feed.Types.AtomFeed $
+        f{Atom.feedAttrs=(XML.Attr (unqual "lang"){qPrefix=Just "xml"} lang):Atom.feedAttrs f}
+   Feed.Types.RSSFeed  f -> Feed.Types.RSSFeed  
+        f{rssChannel=(rssChannel f){rssLanguage=Just lang}}
+   Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed $
+      case break isLang $ RSS1.channelDC (RSS1.feedChannel f) of
+       (as,(dci:bs)) -> 
+         f{RSS1.feedChannel=
+           (RSS1.feedChannel f)
+	     {RSS1.channelDC=as++dci{dcText=lang}:bs}}
+       (_,[]) -> 
+         f{RSS1.feedChannel=
+           (RSS1.feedChannel f)
+	     {RSS1.channelDC=
+	        DCItem{dcElt=DC_Language,dcText=lang}:
+		  RSS1.channelDC (RSS1.feedChannel f)}}
+   Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
+      mapMaybeChildren (\ e -> 
+        if (elName e == unqual "channel")
+	 then Just (mapMaybeChildren (\ e2 -> 
+	                if (elName e2 == unqual "language")
+			 then Just (node (unqual "language",lang))
+			 else Nothing) e)
+	 else Nothing) f
+ where
+  isLang dc  = dcElt dc == DC_Language
 
 
 -- Item constructors (all the way to the end):
