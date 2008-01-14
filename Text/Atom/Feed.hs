@@ -129,6 +129,14 @@ data Generator
        , genText    :: String
        }
 
+nullGenerator :: String -> Generator
+nullGenerator t = Generator
+  { genURI     = Nothing
+  , genVersion = Nothing
+  , genText    = t
+  }
+
+
 data Link
  = Link
       { linkHref     :: URI
