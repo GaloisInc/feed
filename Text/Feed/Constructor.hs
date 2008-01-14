@@ -25,6 +25,7 @@ module Text.Feed.Constructor
        , withFeedLogoLink    -- :: FeedSetter URLString
        , withFeedLanguage    -- :: FeedSetter String
        , withFeedCategories  -- :: FeedSetter [(String,Maybe String)]
+       , withFeedGenerator   -- :: FeedSetter String
 
        , newItem              -- :: FeedKind   -> Item
        , getItemKind          -- :: Item       -> FeedKind
@@ -336,6 +337,38 @@ withFeedCategories cats fe =
              e
              cats)
 	 else Nothing) f
+
+
+withFeedGenerator :: FeedSetter (String,Maybe URLString)
+withFeedGenerator (gen,mbURI) fe = 
+  case fe of
+   Feed.Types.AtomFeed f -> Feed.Types.AtomFeed $
+        f{Atom.feedGenerator=Just ((Atom.nullGenerator gen){Atom.genURI=mbURI})}
+   Feed.Types.RSSFeed  f -> Feed.Types.RSSFeed  
+        f{rssChannel=(rssChannel f){rssGenerator=Just gen}}
+   Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed $
+      case break isCreator $ RSS1.channelDC (RSS1.feedChannel f) of
+       (as,(dci:bs)) -> 
+         f{RSS1.feedChannel=
+           (RSS1.feedChannel f)
+	     {RSS1.channelDC=as++dci{dcText=gen}:bs}}
+       (_,[]) -> 
+         f{RSS1.feedChannel=
+           (RSS1.feedChannel f)
+	     {RSS1.channelDC=
+	        DCItem{dcElt=DC_Creator,dcText=gen}:
+		  RSS1.channelDC (RSS1.feedChannel f)}}
+   Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
+      mapMaybeChildren (\ e -> 
+        if (elName e == unqual "channel")
+	 then Just (mapMaybeChildren (\ e2 -> 
+	                if (elName e2 == unqual "generator")
+			 then Just (node (unqual "generator",gen))
+			 else Nothing) e)
+	 else Nothing) f
+ where
+  isCreator dc  = dcElt dc == DC_Creator
+
 
 
 -- Item constructors (all the way to the end):
