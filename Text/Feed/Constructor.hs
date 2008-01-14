@@ -24,7 +24,7 @@ module Text.Feed.Constructor
        , withFeedPubDate     -- :: FeedSetter DateString
        , withFeedLogoLink    -- :: FeedSetter URLString
        , withFeedLanguage    -- :: FeedSetter String
-       
+       , withFeedCategories  -- :: FeedSetter [(String,Maybe String)]
 
        , newItem              -- :: FeedKind   -> Item
        , getItemKind          -- :: Item       -> FeedKind
@@ -304,6 +304,38 @@ withFeedLanguage lang fe =
 	 else Nothing) f
  where
   isLang dc  = dcElt dc == DC_Language
+
+withFeedCategories :: FeedSetter [(String,Maybe String)]
+withFeedCategories cats fe = 
+  case fe of
+    Feed.Types.AtomFeed f -> Feed.Types.AtomFeed
+        f{ Atom.feedCategories =
+                map ( \ (t,mb) -> (Atom.newCategory t){Atom.catScheme=mb})
+                    cats ++ feedCategories f}
+    Feed.Types.RSSFeed f  -> Feed.Types.RSSFeed
+        f{rssChannel=(rssChannel f){
+	    RSS.rssCategories=
+              map (\ (t,mb) -> (RSS.newCategory t){RSS.rssCategoryDomain=mb})
+                  cats ++ RSS.rssCategories (rssChannel f)}}
+    Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed
+        f{feedChannel=(feedChannel f){
+	    RSS1.channelDC=
+                map (\ (t,_) -> DCItem{dcElt=DC_Subject,dcText=t})
+                    cats ++ RSS1.channelDC (feedChannel f)}}
+    Feed.Types.XMLFeed f -> Feed.Types.XMLFeed $
+      mapMaybeChildren (\ e -> 
+        if (elName e == unqual "channel")
+	 then Just (
+	    foldr 
+	     (\ (t,mb) acc -> 
+                addChild (node ( unqual "category"
+                               , (fromMaybe (\x -> [x])
+                                    (fmap (\v -> (\ x -> [Attr (unqual "domain") v,x])) mb) $
+                                    (Attr (unqual "term") t))
+                                 )) acc)
+             e
+             cats)
+	 else Nothing) f
 
 
 -- Item constructors (all the way to the end):
