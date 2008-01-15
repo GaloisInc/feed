@@ -347,7 +347,7 @@ withFeedGenerator (gen,mbURI) fe =
    Feed.Types.RSSFeed  f -> Feed.Types.RSSFeed  
         f{rssChannel=(rssChannel f){rssGenerator=Just gen}}
    Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed $
-      case break isCreator $ RSS1.channelDC (RSS1.feedChannel f) of
+      case break isSource $ RSS1.channelDC (RSS1.feedChannel f) of
        (as,(dci:bs)) -> 
          f{RSS1.feedChannel=
            (RSS1.feedChannel f)
@@ -356,7 +356,7 @@ withFeedGenerator (gen,mbURI) fe =
          f{RSS1.feedChannel=
            (RSS1.feedChannel f)
 	     {RSS1.channelDC=
-	        DCItem{dcElt=DC_Creator,dcText=gen}:
+	        DCItem{dcElt=DC_Source,dcText=gen}:
 		  RSS1.channelDC (RSS1.feedChannel f)}}
    Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
       mapMaybeChildren (\ e -> 
@@ -367,7 +367,7 @@ withFeedGenerator (gen,mbURI) fe =
 			 else Nothing) e)
 	 else Nothing) f
  where
-  isCreator dc  = dcElt dc == DC_Creator
+  isSource dc  = dcElt dc == DC_Source
 
 
 
