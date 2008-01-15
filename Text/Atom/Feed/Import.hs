@@ -40,6 +40,9 @@ pQLeaf x es    = strContent `fmap` pQNode x es
 pAttr        :: String -> XML.Element -> Maybe String
 pAttr x e     = lookup (atomName x) [ (k,v) | Attr k v <- elAttribs e ]
 
+pAttrs       :: String -> XML.Element -> [String]
+pAttrs x e    = [ v | Attr k v <- elAttribs e, k == atomName x ]
+
 pQAttr       :: QName -> XML.Element -> Maybe String
 pQAttr x e    = lookup x [ (k,v) | Attr k v <- elAttribs e ]
 
