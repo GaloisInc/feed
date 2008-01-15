@@ -24,9 +24,12 @@ library
                      Text.RSS1.Export
                      Text.DublinCore.Types
                      Text.Atom.Feed
-                     Text.Atom.Feed.Import
                      Text.Atom.Feed.Export
+                     Text.Atom.Feed.Import
                      Text.Atom.Feed.Link
+                     Text.Atom.Feed.Validate
+                     Text.Atom.Pub
+                     Text.Atom.Pub.Export
                      Text.Feed.Import
                      Text.Feed.Types
                      Text.Feed.Export
@@ -37,7 +40,7 @@ library
     Build-Depends:   base, xml >= 1.2.3
 
 executable feed-test {
-  build-depends:        base, xml >= 1.2.3
+  build-depends:        base, xml >= 1.2.4
   if flag(new-base) {
     build-depends: base >= 3, containers, old-time, old-locale, filepath
   } else {
