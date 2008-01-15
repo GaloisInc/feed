@@ -53,7 +53,7 @@ import Text.Atom.Feed       as Atom
 import Text.RSS.Syntax      as RSS
 import Text.RSS1.Syntax     as RSS1
 import Text.DublinCore.Types
-import Text.XML.Light as XML
+import Text.XML.Light as XML hiding ( filterChildren )
 
 import Data.Maybe ( fromMaybe, mapMaybe )
 import Data.Char  ( toLower )
