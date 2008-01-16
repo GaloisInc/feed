@@ -12,20 +12,20 @@
 
 module Text.Feed.Constructor
        ( FeedKind(..)
-       , newFeed             -- :: FeedKind  -> Feed
-       , getFeedKind         -- :: Feed      -> FeedKind
-       , FeedSetter          -- type _ a = a -> Feed -> Feed
+       , newFeed              -- :: FeedKind  -> Feed
+       , getFeedKind          -- :: Feed      -> FeedKind
 
-       , addItem             -- :: FeedSetter Item
-       , withFeedTitle       -- :: FeedSetter String
-       , withFeedHome        -- :: FeedSetter URLString
-       , withFeedHTML        -- :: FeedSetter URLString
-       , withFeedDescription -- :: FeedSetter String
-       , withFeedPubDate     -- :: FeedSetter DateString
-       , withFeedLogoLink    -- :: FeedSetter URLString
-       , withFeedLanguage    -- :: FeedSetter String
-       , withFeedCategories  -- :: FeedSetter [(String,Maybe String)]
-       , withFeedGenerator   -- :: FeedSetter String
+       , FeedSetter           -- type _ a = a -> Feed -> Feed
+       , addItem              -- :: FeedSetter Item
+       , withFeedTitle        -- :: FeedSetter String
+       , withFeedHome         -- :: FeedSetter URLString
+       , withFeedHTML         -- :: FeedSetter URLString
+       , withFeedDescription  -- :: FeedSetter String
+       , withFeedPubDate      -- :: FeedSetter DateString
+       , withFeedLogoLink     -- :: FeedSetter URLString
+       , withFeedLanguage     -- :: FeedSetter String
+       , withFeedCategories   -- :: FeedSetter [(String,Maybe String)]
+       , withFeedGenerator    -- :: FeedSetter String
 
        , newItem              -- :: FeedKind   -> Item
        , getItemKind          -- :: Item       -> FeedKind
@@ -33,6 +33,7 @@ module Text.Feed.Constructor
        , rssItemToItem        -- :: RSS.Item   -> Item
        , rdfItemToItem        -- :: RSS1.Item  -> Item
 
+       , ItemSetter           -- type _ a = a -> Item -> Item
        , withItemTitle        -- :: String     -> Item -> Item
        , withItemLink         -- :: URLString  -> Item -> Item
        , withItemPubDate      -- :: DateString -> Item -> Item
@@ -382,10 +383,12 @@ rssItemToItem i = Feed.Types.RSSItem i
 rdfItemToItem :: RSS1.Item -> Feed.Types.Item
 rdfItemToItem i = Feed.Types.RSS1Item i
 
+type ItemSetter a = a -> Feed.Types.Item -> Feed.Types.Item
+
 -- | 'withItemDate updDate' associates the last-updated date, 'updDate',
 -- with a feed item. If the RSS variant doesn't support the notion of
 -- last-updated, 'updDate' is set equal to the creation time.
-withItemDate :: DateString -> Feed.Types.Item -> Feed.Types.Item
+withItemDate :: ItemSetter DateString
 withItemDate dt fi = 
   case fi of
     Feed.Types.AtomItem e ->
@@ -404,12 +407,12 @@ withItemDate dt fi =
  where
   isDate dc  = dcElt dc == DC_Date
 
-withItemPubDate :: DateString -> Feed.Types.Item -> Feed.Types.Item
+withItemPubDate :: ItemSetter DateString
 withItemPubDate dt fi = withItemDate dt fi
 
 -- | 'withItemTitle myTitle' associates a new title, 'myTitle',
 -- with a feed item.
-withItemTitle :: String -> Feed.Types.Item -> Feed.Types.Item
+withItemTitle :: ItemSetter String
 withItemTitle tit fi = 
   case fi of
     Feed.Types.AtomItem e ->
@@ -426,7 +429,7 @@ withItemTitle tit fi =
 
 -- | 'withItemAuthor auStr' associates new author info
 -- with a feed item.
-withItemAuthor :: String -> Feed.Types.Item -> Feed.Types.Item
+withItemAuthor :: ItemSetter String
 withItemAuthor au fi = 
   case fi of
     Feed.Types.AtomItem e ->
@@ -447,7 +450,7 @@ withItemAuthor au fi =
 
 -- | 'withItemFeedLink name myFeed' associates the parent feed URL 'myFeed'
 -- with a feed item. It is labelled as 'name'.
-withItemFeedLink :: String -> String -> Feed.Types.Item -> Feed.Types.Item
+withItemFeedLink :: String -> ItemSetter String
 withItemFeedLink tit url fi = 
   case fi of
     Feed.Types.AtomItem e ->
@@ -465,7 +468,7 @@ withItemFeedLink tit url fi =
 
 
 -- | 'withItemCommentLink url' sets the URL reference to the comment page to 'url'.
-withItemCommentLink :: String -> Feed.Types.Item -> Feed.Types.Item
+withItemCommentLink :: ItemSetter String
 withItemCommentLink url fi = 
   case fi of
     Feed.Types.AtomItem e ->
@@ -485,7 +488,7 @@ withItemCommentLink url fi =
   isRel dc  = dcElt dc == DC_Relation
 
 -- | 'withItemEnclosure url mbTy len' sets the URL reference to the comment page to 'url'.
-withItemEnclosure :: String -> Maybe String -> Integer -> Feed.Types.Item -> Feed.Types.Item
+withItemEnclosure :: String -> Maybe String -> ItemSetter Integer
 withItemEnclosure url ty len fi = 
   case fi of
     Feed.Types.AtomItem e -> Feed.Types.AtomItem 
@@ -511,7 +514,7 @@ withItemEnclosure url ty len fi =
 
 -- | 'withItemId isURL id' associates new unique identifier with a feed item.
 -- If 'isURL' is 'True', then the id is assumed to point to a valid web resource.
-withItemId :: Bool -> String -> Feed.Types.Item -> Feed.Types.Item
+withItemId :: Bool -> ItemSetter String
 withItemId isURL idS fi = 
   case fi of
     Feed.Types.AtomItem e ->
@@ -533,7 +536,7 @@ withItemId isURL idS fi =
 
 -- | 'withItemDescription desc' associates a new descriptive string (aka summary)
 -- with a feed item.
-withItemDescription :: String -> Feed.Types.Item -> Feed.Types.Item
+withItemDescription :: ItemSetter String
 withItemDescription desc fi = 
   case fi of
     Feed.Types.AtomItem e ->
@@ -550,7 +553,7 @@ withItemDescription desc fi =
 
 -- | 'withItemRights rightStr' associates the rights information 'rightStr'
 -- with a feed item.
-withItemRights :: String -> Feed.Types.Item -> Feed.Types.Item
+withItemRights :: ItemSetter String
 withItemRights desc fi = 
   case fi of
     Feed.Types.AtomItem e ->
@@ -571,7 +574,7 @@ withItemRights desc fi =
 
 -- | 'withItemTitle myLink' associates a new URL, 'myLink',
 -- with a feed item.
-withItemLink :: URLString -> Feed.Types.Item -> Feed.Types.Item
+withItemLink :: ItemSetter URLString
 withItemLink url fi = 
   case fi of
     Feed.Types.AtomItem e ->
@@ -595,9 +598,7 @@ withItemLink url fi =
   toStr (Just (Left x)) = x
   toStr (Just (Right x)) = x
     
-withItemCategories :: [(String,Maybe String)]
-                   -> Feed.Types.Item
-                   -> Feed.Types.Item
+withItemCategories :: ItemSetter [(String,Maybe String)]
 withItemCategories cats fi = 
   case fi of
     Feed.Types.AtomItem e -> Feed.Types.AtomItem 
