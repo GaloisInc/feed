@@ -22,6 +22,8 @@ module Text.Feed.Constructor
        , withFeedHTML         -- :: FeedSetter URLString
        , withFeedDescription  -- :: FeedSetter String
        , withFeedPubDate      -- :: FeedSetter DateString
+       , withFeedLastUpdate   -- :: FeedSetter DateString
+       , withFeedDate         -- :: FeedSetter DateString
        , withFeedLogoLink     -- :: FeedSetter URLString
        , withFeedLanguage     -- :: FeedSetter String
        , withFeedCategories   -- :: FeedSetter [(String,Maybe String)]
@@ -34,18 +36,18 @@ module Text.Feed.Constructor
        , rdfItemToItem        -- :: RSS1.Item  -> Item
 
        , ItemSetter           -- type _ a = a -> Item -> Item
-       , withItemTitle        -- :: String     -> Item -> Item
-       , withItemLink         -- :: URLString  -> Item -> Item
-       , withItemPubDate      -- :: DateString -> Item -> Item
-       , withItemDate         -- :: DateString -> Item -> Item
-       , withItemAuthor       -- :: String     -> Item -> Item
-       , withItemCommentLink  -- :: String     -> Item -> Item
-       , withItemEnclosure    -- :: String  -> Maybe String -> Integer -> Item -> Item
-       , withItemFeedLink     -- :: String -> String -> Item -> Item
-       , withItemId           -- :: Bool -> String -> Item -> Item
-       , withItemCategories   -- :: [(String, Maybe String)] -> Item -> Item
-       , withItemDescription  -- :: String     -> Item -> Item
-       , withItemRights       -- :: String     -> Item -> Item
+       , withItemTitle        -- :: ItemSetter String
+       , withItemLink         -- :: ItemSetter URLString
+       , withItemPubDate      -- :: ItemSetter DateString
+       , withItemDate         -- :: ItemSetter DateString
+       , withItemAuthor       -- :: ItemSetter String
+       , withItemCommentLink  -- :: ItemSetter String
+       , withItemEnclosure    -- :: String -> Maybe String -> ItemSetter Integer
+       , withItemFeedLink     -- :: String -> ItemSetter String
+       , withItemId           -- :: Bool   -> ItemSetter String
+       , withItemCategories   -- :: ItemSetter [(String, Maybe String)]
+       , withItemDescription  -- :: ItemSetter String
+       , withItemRights       -- :: ItemSetter String
        ) where
 
 import Text.Feed.Types      as Feed.Types
@@ -236,6 +238,45 @@ withFeedPubDate dateStr fe =
  where
   isDate dc  = dcElt dc == DC_Date
 
+withFeedLastUpdate :: FeedSetter DateString
+withFeedLastUpdate dateStr fe = 
+  case fe of
+   Feed.Types.AtomFeed f -> Feed.Types.AtomFeed 
+      f{feedUpdated=dateStr}
+   Feed.Types.RSSFeed  f -> Feed.Types.RSSFeed  
+      f{rssChannel=(rssChannel f){rssLastUpdate=Just dateStr}}
+   Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed $
+      case break isDate $ RSS1.channelDC (RSS1.feedChannel f) of
+       (as,(dci:bs)) -> 
+         f{RSS1.feedChannel=
+           (RSS1.feedChannel f)
+	     {RSS1.channelDC=as++dci{dcText=dateStr}:bs}}
+       (_,[]) -> 
+         f{RSS1.feedChannel=
+           (RSS1.feedChannel f)
+	     {RSS1.channelDC=
+	        DCItem{dcElt=DC_Date,dcText=dateStr}:
+		  RSS1.channelDC (RSS1.feedChannel f)}}
+   Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
+      mapMaybeChildren (\ e -> 
+        if (elName e == unqual "channel")
+	 then Just (mapMaybeChildren (\ e2 -> 
+	                if (elName e2 == unqual "lastUpdate")
+			 then Just (node (unqual "lastUpdate",dateStr))
+			 else Nothing) e)
+	 else Nothing) f
+ where
+  isDate dc  = dcElt dc == DC_Date
+
+
+-- | 'withFeedDate dt' is the composition of 'withFeedPubDate' 
+-- and 'withFeedLastUpdate', setting both publication date and
+-- last update date to 'dt'. Notice that RSS2.0 is the only format
+-- supporting both pub and last-update.
+withFeedDate :: FeedSetter DateString
+withFeedDate dt f = withFeedPubDate dt(withFeedLastUpdate dt f)
+
+
 withFeedLogoLink :: URLString -> FeedSetter URLString
 withFeedLogoLink imgURL lnk fe = 
   case fe of
@@ -385,11 +426,10 @@ rdfItemToItem i = Feed.Types.RSS1Item i
 
 type ItemSetter a = a -> Feed.Types.Item -> Feed.Types.Item
 
--- | 'withItemDate updDate' associates the last-updated date, 'updDate',
--- with a feed item. If the RSS variant doesn't support the notion of
--- last-updated, 'updDate' is set equal to the creation time.
-withItemDate :: ItemSetter DateString
-withItemDate dt fi = 
+-- | 'withItemPubDate dt' associates the creation\/ publication date 'dt'
+-- with a feed item.
+withItemPubDate :: ItemSetter DateString
+withItemPubDate dt fi = 
   case fi of
     Feed.Types.AtomItem e ->
       Feed.Types.AtomItem e{Atom.entryUpdated=dt}
@@ -407,8 +447,9 @@ withItemDate dt fi =
  where
   isDate dc  = dcElt dc == DC_Date
 
-withItemPubDate :: ItemSetter DateString
-withItemPubDate dt fi = withItemDate dt fi
+-- | 'withItemDate' is a synonym for 'withItemPubDate'.
+withItemDate :: ItemSetter DateString
+withItemDate dt fi = withItemPubDate dt fi
 
 -- | 'withItemTitle myTitle' associates a new title, 'myTitle',
 -- with a feed item.
