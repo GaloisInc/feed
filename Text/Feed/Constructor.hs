@@ -17,6 +17,7 @@ module Text.Feed.Constructor
 
        , FeedSetter           -- type _ a = a -> Feed -> Feed
        , addItem              -- :: FeedSetter Item
+
        , withFeedTitle        -- :: FeedSetter String
        , withFeedHome         -- :: FeedSetter URLString
        , withFeedHTML         -- :: FeedSetter URLString

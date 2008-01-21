@@ -25,7 +25,7 @@ data RSS
      , rssOther   :: [XML.Element]
      }
 
-type URLString = String
+type URLString  = String
 type DateString = String
 
 data RSSChannel
