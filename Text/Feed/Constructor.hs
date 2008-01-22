@@ -33,6 +33,7 @@ module Text.Feed.Constructor
        , withFeedLanguage     -- :: FeedSetter String
        , withFeedCategories   -- :: FeedSetter [(String,Maybe String)]
        , withFeedGenerator    -- :: FeedSetter String
+       , withFeedItems        -- :: FeedSetter [Item]
 
        , newItem              -- :: FeedKind   -> Item
        , getItemKind          -- :: Item       -> FeedKind
@@ -122,6 +123,18 @@ addItem it f =
          -- will delay doing so until serialization.
        Feed.Types.RSS1Feed r{RSS1.feedItems=e:RSS1.feedItems r}
     _ -> error "addItem: currently unable to automatically convert items from one feed type to another"
+
+withFeedItems :: FeedSetter [Feed.Types.Item]
+withFeedItems is fe = 
+ foldr addItem
+   (case fe of
+      Feed.Types.AtomFeed f -> Feed.Types.AtomFeed 
+          f{Atom.feedEntries=[]}
+      Feed.Types.RSSFeed  f -> Feed.Types.RSSFeed  
+          f{rssChannel=(rssChannel f){rssItems=[]}}
+      Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed 
+          f{feedItems=[]})
+   is
 
 newItem :: FeedKind -> Feed.Types.Item
 newItem fk = 
