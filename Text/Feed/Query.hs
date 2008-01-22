@@ -16,6 +16,7 @@ module Text.Feed.Query
 
        , FeedGetter               -- type _ a = Feed -> a
        , getFeedTitle             -- :: FeedGetter String
+       , getFeedAuthor            -- :: FeedGetter String
        , getFeedHome              -- :: FeedGetter URLString
        , getFeedHTML              -- :: FeedGetter URLString
        , getFeedDescription       -- :: FeedGetter String
@@ -39,6 +40,7 @@ module Text.Feed.Query
        , getItemId                -- :: ItemGetter (Bool,String)
        , getItemCategories        -- :: ItemGetter [String]
        , getItemRights            -- :: ItemGetter String
+       
        ) where
 
 import Text.Feed.Types as Feed
@@ -65,6 +67,22 @@ feedItems fe =
 
 
 type FeedGetter a = Feed.Feed -> Maybe a
+
+getFeedAuthor       :: Feed.Feed -> (Maybe String)
+getFeedAuthor ft = 
+  case ft of
+    Feed.AtomFeed f -> case Atom.feedAuthors f of { [] -> Nothing; (x:_) -> Just (Atom.personName x)}
+    Feed.RSSFeed  f -> RSS.rssEditor (RSS.rssChannel f)
+    Feed.RSS1Feed f -> 
+      case filter isAuthor $ RSS1.channelDC (RSS1.feedChannel f) of
+       (dci:_) -> Just (dcText dci)
+       _ -> Nothing
+    Feed.XMLFeed f  ->
+      case findElement (unqual "channel") f of
+        Just e1 -> (fmap XML.strContent $ findElement (unqual "editor") e1)
+	Nothing -> Nothing
+ where
+  isAuthor dc  = dcElt dc == DC_Creator
 
 getFeedTitle       :: Feed.Feed -> String
 getFeedTitle ft = 
