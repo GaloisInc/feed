@@ -13,6 +13,10 @@
 module Text.Feed.Constructor
        ( FeedKind(..)
        , newFeed              -- :: FeedKind  -> Feed
+       , feedFromRSS          -- :: RSS       -> Feed
+       , feedFromAtom         -- :: Atom.Feed -> Feed
+       , feedFromRDF          -- :: RSS1.Feed -> Feed
+       , feedFromXML          -- :: Element   -> Feed
        , getFeedKind          -- :: Feed      -> FeedKind
 
        , FeedSetter           -- type _ a = a -> Feed -> Feed
@@ -85,6 +89,18 @@ newFeed fk =
       let def = (RSS1.nullFeed "default-channel-url" "dummy-title") in
       RSS1Feed $ fromMaybe def $ fmap (\ v -> def{RSS1.feedVersion=v}) mbV
       
+
+feedFromRSS :: RSS.RSS -> Feed.Types.Feed
+feedFromRSS r = RSSFeed r
+
+feedFromAtom :: Atom.Feed -> Feed.Types.Feed
+feedFromAtom f = AtomFeed f
+
+feedFromRDF :: RSS1.Feed -> Feed.Types.Feed
+feedFromRDF f = RSS1Feed f
+
+feedFromXML :: XML.Element -> Feed.Types.Feed
+feedFromXML f = XMLFeed f
     
 getFeedKind :: Feed.Types.Feed -> FeedKind
 getFeedKind f = 
