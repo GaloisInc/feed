@@ -27,6 +27,7 @@ module Text.Feed.Query
        , getFeedLanguage          -- :: FeedGetter String
        , getFeedCategories        -- :: FeedGetter [(String, Maybe String)]
        , getFeedGenerator         -- :: FeedGetter String
+       , getFeedItems             -- :: FeedGetter [Item]
 
        , ItemGetter               -- type _ a = Item -> Maybe a
        , getItemTitle             -- :: ItemGetter (String)
@@ -65,6 +66,9 @@ feedItems fe =
      -- ToDo: look for 'entry' elements if 'items' are missing..
     XMLFeed f  -> map Feed.XMLItem $ XML.findElements (XML.unqual "item") f
 
+
+getFeedItems :: Feed.Feed -> [Feed.Item]
+getFeedItems = Text.Feed.Query.feedItems
 
 type FeedGetter a = Feed.Feed -> Maybe a
 
