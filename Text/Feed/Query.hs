@@ -31,7 +31,7 @@ module Text.Feed.Query
        , ItemGetter               -- type _ a = Item -> Maybe a
        , getItemTitle             -- :: ItemGetter (String)
        , getItemLink              -- :: ItemGetter (String)
-       , getItemPubDate           -- :: ItemGetter (DateString)
+       , getItemPublishDate       -- :: ItemGetter (DateString)
        , getItemDate              -- :: ItemGetter (DateString)
        , getItemAuthor            -- :: ItemGetter (String)
        , getItemCommentLink       -- :: ItemGetter (URLString)
@@ -266,8 +266,8 @@ getItemLink it =
   isHTMLType _ = True -- if none given, assume html.
   
 
-getItemPubDate :: ItemGetter DateString
-getItemPubDate it =
+getItemPublishDate :: ItemGetter DateString
+getItemPublishDate it =
   case it of
     Feed.AtomItem i -> Just $ Atom.entryUpdated i
     Feed.RSSItem i  -> RSS.rssItemPubDate i
@@ -281,7 +281,7 @@ getItemPubDate it =
   isDate dc  = dcElt dc == DC_Date
 
 getItemDate :: ItemGetter DateString
-getItemDate it = getItemPubDate it
+getItemDate it = getItemPublishDate it
 
 getItemAuthor      :: ItemGetter String
 getItemAuthor it = 
