@@ -9,6 +9,7 @@ Author:             Sigbjorn Finne
 Maintainer:         Don Stewart <dons@galois.com>
 Extra-Source-Files: tests/Main.hs tests/Setup.hs tests/rss-tests.cabal
 Cabal-version:   >= 1.2
+build-type: Simple
 
 flag new-base
   description: Build with new smaller base library
