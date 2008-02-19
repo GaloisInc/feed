@@ -1,5 +1,5 @@
 Name:               feed
-Version:            0.3
+Version:            0.3.1
 License:            BSD3
 License-file:       LICENSE
 Category:           Text
@@ -38,10 +38,10 @@ library
                      Text.Feed.Constructor
                      Text.Feed.Translate
     Ghc-Options:     -Wall -O2
-    Build-Depends:   base, xml >= 1.2.3
+    Build-Depends:   base, xml >= 1.2.6
 
 executable feed-test {
-  build-depends:        base, xml >= 1.2.4
+  build-depends:        base, xml >= 1.2.6
   if flag(new-base) {
     build-depends: base >= 3, containers, old-time, old-locale, filepath
   } else {

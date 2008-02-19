@@ -30,10 +30,10 @@ mkQName :: Maybe String -> String -> QName
 mkQName a b = blank_name{qPrefix=a,qName=b}
 
 mkElem :: QName -> [Attr] -> [Element] -> Element
-mkElem a b c = node (a,(b::[Attr]),(c::[Element]))
+mkElem a b c = node a ((b::[Attr]),(c::[Element]))
 
 mkLeaf :: QName -> [Attr] -> String -> Element
-mkLeaf a b c = node ((a::QName),(b::[Attr]),[Text blank_cdata{cdData=c}])
+mkLeaf a b c = node (a::QName) ((b::[Attr]),[Text blank_cdata{cdData=c}])
 
 mkAttr :: String -> String -> Attr
 mkAttr a b  = Attr blank_name{qName=a} b

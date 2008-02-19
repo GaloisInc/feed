@@ -171,7 +171,7 @@ withFeedTitle tit fe =
         if (elName e == unqual "channel")
 	 then Just (mapMaybeChildren (\ e2 -> 
 	                if (elName e2 == unqual "title")
-			 then Just (node (unqual "title",tit))
+			 then Just (node (unqual "title") tit)
 			 else Nothing) e)
 	 else Nothing) f
 
@@ -189,7 +189,7 @@ withFeedHome url fe =
         if (elName e == unqual "channel")
 	 then Just (mapMaybeChildren (\ e2 -> 
 	                if (elName e2 == unqual "link")
-			 then Just (node (unqual "link",url))
+			 then Just (node (unqual "link") url)
 			 else Nothing) e)
 	 else Nothing) f
  where
@@ -210,7 +210,7 @@ withFeedHTML url fe =
         if (elName e == unqual "channel")
 	 then Just (mapMaybeChildren (\ e2 -> 
 	                if (elName e2 == unqual "link")
-			 then Just (node (unqual "link",url))
+			 then Just (node (unqual "link") url)
 			 else Nothing) e)
 	 else Nothing) f
  where
@@ -234,7 +234,7 @@ withFeedDescription desc fe =
         if (elName e == unqual "channel")
 	 then Just (mapMaybeChildren (\ e2 -> 
 	                if (elName e2 == unqual "description")
-			 then Just (node (unqual "description",desc))
+			 then Just (node (unqual "description") desc)
 			 else Nothing) e)
 	 else Nothing) f
 
@@ -262,7 +262,7 @@ withFeedPubDate dateStr fe =
         if (elName e == unqual "channel")
 	 then Just (mapMaybeChildren (\ e2 -> 
 	                if (elName e2 == unqual "pubDate")
-			 then Just (node (unqual "pubDate",dateStr))
+			 then Just (node (unqual "pubDate") dateStr)
 			 else Nothing) e)
 	 else Nothing) f
  where
@@ -292,7 +292,7 @@ withFeedLastUpdate dateStr fe =
         if (elName e == unqual "channel")
 	 then Just (mapMaybeChildren (\ e2 -> 
 	                if (elName e2 == unqual "lastUpdate")
-			 then Just (node (unqual "lastUpdate",dateStr))
+			 then Just (node (unqual "lastUpdate") dateStr)
 			 else Nothing) e)
 	 else Nothing) f
  where
@@ -329,10 +329,10 @@ withFeedLogoLink imgURL lnk fe =
         if (elName e == unqual "channel")
 	 then Just (mapMaybeChildren (\ e2 -> 
 	                if (elName e2 == unqual "image")
-			 then Just (node (unqual "image",[ node (unqual "url",imgURL)
-                                                         , node (unqual "title",title)
-                                                         , node (unqual "link",lnk)
-							 ]))
+			 then Just (node (unqual "image")[ node (unqual "url") imgURL
+                                                         , node (unqual "title") title
+                                                         , node (unqual "link") lnk
+							 ])
 			 else Nothing) e)
 	 else Nothing) f
      where
@@ -372,7 +372,7 @@ withFeedLanguage lang fe =
         if (elName e == unqual "channel")
 	 then Just (mapMaybeChildren (\ e2 -> 
 	                if (elName e2 == unqual "language")
-			 then Just (node (unqual "language",lang))
+			 then Just (node (unqual "language") lang)
 			 else Nothing) e)
 	 else Nothing) f
  where
@@ -401,11 +401,11 @@ withFeedCategories cats fe =
 	 then Just (
 	    foldr 
 	     (\ (t,mb) acc -> 
-                addChild (node ( unqual "category"
-                               , (fromMaybe (\x -> [x])
+                addChild (node ( unqual "category")
+                                (fromMaybe (\x -> [x])
                                     (fmap (\v -> (\ x -> [Attr (unqual "domain") v,x])) mb) $
                                     (Attr (unqual "term") t))
-                                 )) acc)
+                                 ) acc)
              e
              cats)
 	 else Nothing) f
@@ -435,7 +435,7 @@ withFeedGenerator (gen,mbURI) fe =
         if (elName e == unqual "channel")
 	 then Just (mapMaybeChildren (\ e2 -> 
 	                if (elName e2 == unqual "generator")
-			 then Just (node (unqual "generator",gen))
+			 then Just (node (unqual "generator") gen)
 			 else Nothing) e)
 	 else Nothing) f
  where
@@ -471,7 +471,7 @@ withItemPubDate dt fi =
        (_,[]) -> Feed.Types.RSS1Item i{RSS1.itemDC=DCItem{dcElt=DC_Date,dcText=dt}:RSS1.itemDC i}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "pubDate", dt)) $
+        addChild (node (unqual "pubDate") dt) $
             filterChildren (\ e -> elName e /= unqual "pubDate")
                            i
  where
@@ -494,7 +494,7 @@ withItemTitle tit fi =
       Feed.Types.RSS1Item  i{RSS1.itemTitle=tit}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "title",tit)) $
+        addChild (node (unqual "title") tit) $
             filterChildren (\ e -> elName e /= unqual "title")
                            i
 
@@ -513,7 +513,7 @@ withItemAuthor au fi =
        (_,[]) -> Feed.Types.RSS1Item i{RSS1.itemDC=DCItem{dcElt=DC_Creator,dcText=au}:RSS1.itemDC i}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "author",au)) $
+        addChild (node (unqual "author") au) $
             filterChildren (\ e -> elName e /= unqual "author")
                            i
  where
@@ -532,7 +532,7 @@ withItemFeedLink tit url fi =
       Feed.Types.RSS1Item  i{RSS1.itemTitle=tit}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "source",Attr (unqual "url") url,tit)) $
+        addChild (node (unqual "source") (Attr (unqual "url") url,tit)) $
             filterChildren (\ e -> elName e /= unqual "source")
                            i
 
@@ -552,7 +552,7 @@ withItemCommentLink url fi =
        (_,[]) -> Feed.Types.RSS1Item i{RSS1.itemDC=DCItem{dcElt=DC_Relation,dcText=url}:RSS1.itemDC i}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "comments",url)) $
+        addChild (node (unqual "comments") url) $
             filterChildren (\ e -> elName e /= unqual "comments")
                            i
  where
@@ -575,7 +575,7 @@ withItemEnclosure url ty len fi =
                                             }:RSS1.itemContent i}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild ((node (unqual "enclosure",url))
+        addChild ((node (unqual "enclosure") url)
           {elAttribs= [ Attr (unqual "length") "0"
                       , Attr (unqual "type") (fromMaybe "text/html" ty)
                       ]}) $
@@ -598,7 +598,7 @@ withItemId isURL idS fi =
        (_,[]) -> Feed.Types.RSS1Item i{RSS1.itemDC=DCItem{dcElt=DC_Identifier,dcText=idS}:RSS1.itemDC i}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "guid",Attr (unqual "isPermaLink") (showBool isURL),idS)) $
+        addChild (node (unqual "guid") (Attr (unqual "isPermaLink") (showBool isURL),idS)) $
             filterChildren (\ e -> elName e /= unqual "guid")
                            i
  where
@@ -618,7 +618,7 @@ withItemDescription desc fi =
       Feed.Types.RSS1Item  i{RSS1.itemDesc=Just desc}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "description",desc)) $
+        addChild (node (unqual "description") desc) $
             filterChildren (\ e -> elName e /= unqual "description")
                            i
 
@@ -656,7 +656,7 @@ withItemLink url fi =
       Feed.Types.RSS1Item  i{RSS1.itemLink=url}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "link", url)) $
+        addChild (node (unqual "link") url) $
             filterChildren (\ e -> elName e /= unqual "link")
                            i
  where
@@ -686,11 +686,11 @@ withItemCategories cats fi =
                     cats ++ RSS1.itemDC i}
     Feed.Types.XMLItem i  -> Feed.Types.XMLItem $
          foldr (\ (t,mb) acc -> 
-                  addChild (node ( unqual "category"
-                                 , (fromMaybe (\x -> [x])
+                  addChild (node ( unqual "category")
+                                  (fromMaybe (\x -> [x])
                                              (fmap (\v -> (\ x -> [Attr (unqual "domain") v,x])) mb) $
                                              (Attr (unqual "term") t))
-                                 )) acc)
+                                 ) acc)
                i
                cats
 
