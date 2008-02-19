@@ -169,11 +169,11 @@ withFeedTitle tit fe =
    Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
       mapMaybeChildren (\ e -> 
         if (elName e == unqual "channel")
-	 then Just (mapMaybeChildren (\ e2 -> 
-	                if (elName e2 == unqual "title")
-			 then Just (node (unqual "title") tit)
-			 else Nothing) e)
-	 else Nothing) f
+         then Just (mapMaybeChildren (\ e2 -> 
+                        if (elName e2 == unqual "title")
+                         then Just (unode "title" tit)
+                         else Nothing) e)
+         else Nothing) f
 
 withFeedHome :: FeedSetter URLString
 withFeedHome url fe = 
@@ -187,15 +187,15 @@ withFeedHome url fe =
    Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
       mapMaybeChildren (\ e -> 
         if (elName e == unqual "channel")
-	 then Just (mapMaybeChildren (\ e2 -> 
-	                if (elName e2 == unqual "link")
-			 then Just (node (unqual "link") url)
-			 else Nothing) e)
-	 else Nothing) f
+         then Just (mapMaybeChildren (\ e2 -> 
+                        if (elName e2 == unqual "link")
+                         then Just (unode "link" url)
+                         else Nothing) e)
+         else Nothing) f
  where
   newSelf = (nullLink url){ linkRel=Just (Left "self")
                           , linkType=Just "application/atom+xml" 
-			  }
+                          }
 
 -- | 'withFeedHTML' sets the URL where an HTML version of the
 -- feed is published.
@@ -208,15 +208,15 @@ withFeedHTML url fe =
    Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
       mapMaybeChildren (\ e -> 
         if (elName e == unqual "channel")
-	 then Just (mapMaybeChildren (\ e2 -> 
-	                if (elName e2 == unqual "link")
-			 then Just (node (unqual "link") url)
-			 else Nothing) e)
-	 else Nothing) f
+         then Just (mapMaybeChildren (\ e2 -> 
+                        if (elName e2 == unqual "link")
+                         then Just (unode "link" url)
+                         else Nothing) e)
+         else Nothing) f
  where
   newAlt = (nullLink url){ linkRel=Just (Left "alternate")
                           , linkType=Just "text/html" 
-			  }
+                          }
 
 -- | 'withFeedHTML' sets the URL where an HTML version of the
 -- feed is published.
@@ -232,11 +232,11 @@ withFeedDescription desc fe =
    Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
       mapMaybeChildren (\ e -> 
         if (elName e == unqual "channel")
-	 then Just (mapMaybeChildren (\ e2 -> 
-	                if (elName e2 == unqual "description")
-			 then Just (node (unqual "description") desc)
-			 else Nothing) e)
-	 else Nothing) f
+         then Just (mapMaybeChildren (\ e2 -> 
+                        if (elName e2 == unqual "description")
+                         then Just (unode "description" desc)
+                         else Nothing) e)
+         else Nothing) f
 
 withFeedPubDate :: FeedSetter String
 withFeedPubDate dateStr fe = 
@@ -250,21 +250,21 @@ withFeedPubDate dateStr fe =
        (as,(dci:bs)) -> 
          f{RSS1.feedChannel=
            (RSS1.feedChannel f)
-	     {RSS1.channelDC=as++dci{dcText=dateStr}:bs}}
+             {RSS1.channelDC=as++dci{dcText=dateStr}:bs}}
        (_,[]) -> 
          f{RSS1.feedChannel=
            (RSS1.feedChannel f)
-	     {RSS1.channelDC=
-	        DCItem{dcElt=DC_Date,dcText=dateStr}:
-		  RSS1.channelDC (RSS1.feedChannel f)}}
+             {RSS1.channelDC=
+                DCItem{dcElt=DC_Date,dcText=dateStr}:
+                  RSS1.channelDC (RSS1.feedChannel f)}}
    Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
       mapMaybeChildren (\ e -> 
         if (elName e == unqual "channel")
-	 then Just (mapMaybeChildren (\ e2 -> 
-	                if (elName e2 == unqual "pubDate")
-			 then Just (node (unqual "pubDate") dateStr)
-			 else Nothing) e)
-	 else Nothing) f
+         then Just (mapMaybeChildren (\ e2 -> 
+                        if (elName e2 == unqual "pubDate")
+                         then Just (unode "pubDate" dateStr)
+                         else Nothing) e)
+         else Nothing) f
  where
   isDate dc  = dcElt dc == DC_Date
 
@@ -280,21 +280,21 @@ withFeedLastUpdate dateStr fe =
        (as,(dci:bs)) -> 
          f{RSS1.feedChannel=
            (RSS1.feedChannel f)
-	     {RSS1.channelDC=as++dci{dcText=dateStr}:bs}}
+             {RSS1.channelDC=as++dci{dcText=dateStr}:bs}}
        (_,[]) -> 
          f{RSS1.feedChannel=
            (RSS1.feedChannel f)
-	     {RSS1.channelDC=
-	        DCItem{dcElt=DC_Date,dcText=dateStr}:
-		  RSS1.channelDC (RSS1.feedChannel f)}}
+             {RSS1.channelDC=
+                DCItem{dcElt=DC_Date,dcText=dateStr}:
+                  RSS1.channelDC (RSS1.feedChannel f)}}
    Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
       mapMaybeChildren (\ e -> 
         if (elName e == unqual "channel")
-	 then Just (mapMaybeChildren (\ e2 -> 
-	                if (elName e2 == unqual "lastUpdate")
-			 then Just (node (unqual "lastUpdate") dateStr)
-			 else Nothing) e)
-	 else Nothing) f
+         then Just (mapMaybeChildren (\ e2 -> 
+                        if (elName e2 == unqual "lastUpdate")
+                         then Just (unode "lastUpdate" dateStr)
+                         else Nothing) e)
+         else Nothing) f
  where
   isDate dc  = dcElt dc == DC_Date
 
@@ -317,7 +317,7 @@ withFeedLogoLink imgURL lnk fe =
    Feed.Types.RSSFeed  f -> Feed.Types.RSSFeed  
       f{ rssChannel=(rssChannel f)
          {rssImage=Just $ 
-	    RSS.nullImage imgURL (rssTitle (rssChannel f)) lnk}}
+            RSS.nullImage imgURL (rssTitle (rssChannel f)) lnk}}
    Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed $
       f{ feedImage   = Just $
             RSS1.nullImage imgURL (RSS1.channelTitle (RSS1.feedChannel f)) lnk
@@ -327,25 +327,25 @@ withFeedLogoLink imgURL lnk fe =
    Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
       mapMaybeChildren (\ e -> 
         if (elName e == unqual "channel")
-	 then Just (mapMaybeChildren (\ e2 -> 
-	                if (elName e2 == unqual "image")
-			 then Just (node (unqual "image")[ node (unqual "url") imgURL
-                                                         , node (unqual "title") title
-                                                         , node (unqual "link") lnk
-							 ])
-			 else Nothing) e)
-	 else Nothing) f
+         then Just (mapMaybeChildren (\ e2 -> 
+                        if (elName e2 == unqual "image")
+                         then Just (unode "image" [ unode "url" imgURL
+                                                  , unode "title" title
+                                                  , unode "link" lnk
+                                                  ])
+                         else Nothing) e)
+         else Nothing) f
      where
       title = 
        case fmap (findChild (unqual "title"))
                  (findChild (unqual "channel") f) of
          Just (Just e1) -> strContent e1
-	 _ -> "feed_title" -- shouldn't happen..
+         _ -> "feed_title" -- shouldn't happen..
 
  where
   newSelf = (nullLink lnk){ linkRel=Just (Left "self")
                           , linkType=Just "application/atom+xml" 
-			  }
+                          }
 
 
 withFeedLanguage :: FeedSetter String
@@ -360,21 +360,21 @@ withFeedLanguage lang fe =
        (as,(dci:bs)) -> 
          f{RSS1.feedChannel=
            (RSS1.feedChannel f)
-	     {RSS1.channelDC=as++dci{dcText=lang}:bs}}
+             {RSS1.channelDC=as++dci{dcText=lang}:bs}}
        (_,[]) -> 
          f{RSS1.feedChannel=
            (RSS1.feedChannel f)
-	     {RSS1.channelDC=
-	        DCItem{dcElt=DC_Language,dcText=lang}:
-		  RSS1.channelDC (RSS1.feedChannel f)}}
+             {RSS1.channelDC=
+                DCItem{dcElt=DC_Language,dcText=lang}:
+                  RSS1.channelDC (RSS1.feedChannel f)}}
    Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
       mapMaybeChildren (\ e -> 
         if (elName e == unqual "channel")
-	 then Just (mapMaybeChildren (\ e2 -> 
-	                if (elName e2 == unqual "language")
-			 then Just (node (unqual "language") lang)
-			 else Nothing) e)
-	 else Nothing) f
+         then Just (mapMaybeChildren (\ e2 -> 
+                        if (elName e2 == unqual "language")
+                         then Just (unode "language" lang)
+                         else Nothing) e)
+         else Nothing) f
  where
   isLang dc  = dcElt dc == DC_Language
 
@@ -387,28 +387,28 @@ withFeedCategories cats fe =
                     cats ++ feedCategories f}
     Feed.Types.RSSFeed f  -> Feed.Types.RSSFeed
         f{rssChannel=(rssChannel f){
-	    RSS.rssCategories=
+            RSS.rssCategories=
               map (\ (t,mb) -> (RSS.newCategory t){RSS.rssCategoryDomain=mb})
                   cats ++ RSS.rssCategories (rssChannel f)}}
     Feed.Types.RSS1Feed f -> Feed.Types.RSS1Feed
         f{feedChannel=(feedChannel f){
-	    RSS1.channelDC=
+            RSS1.channelDC=
                 map (\ (t,_) -> DCItem{dcElt=DC_Subject,dcText=t})
                     cats ++ RSS1.channelDC (feedChannel f)}}
     Feed.Types.XMLFeed f -> Feed.Types.XMLFeed $
       mapMaybeChildren (\ e -> 
         if (elName e == unqual "channel")
-	 then Just (
-	    foldr 
-	     (\ (t,mb) acc -> 
-                addChild (node ( unqual "category")
+         then Just (
+            foldr 
+             (\ (t,mb) acc -> 
+                addChild (unode "category"
                                 (fromMaybe (\x -> [x])
                                     (fmap (\v -> (\ x -> [Attr (unqual "domain") v,x])) mb) $
                                     (Attr (unqual "term") t))
                                  ) acc)
              e
              cats)
-	 else Nothing) f
+         else Nothing) f
 
 
 withFeedGenerator :: FeedSetter (String,Maybe URLString)
@@ -423,21 +423,21 @@ withFeedGenerator (gen,mbURI) fe =
        (as,(dci:bs)) -> 
          f{RSS1.feedChannel=
            (RSS1.feedChannel f)
-	     {RSS1.channelDC=as++dci{dcText=gen}:bs}}
+             {RSS1.channelDC=as++dci{dcText=gen}:bs}}
        (_,[]) -> 
          f{RSS1.feedChannel=
            (RSS1.feedChannel f)
-	     {RSS1.channelDC=
-	        DCItem{dcElt=DC_Source,dcText=gen}:
-		  RSS1.channelDC (RSS1.feedChannel f)}}
+             {RSS1.channelDC=
+                DCItem{dcElt=DC_Source,dcText=gen}:
+                  RSS1.channelDC (RSS1.feedChannel f)}}
    Feed.Types.XMLFeed  f -> Feed.Types.XMLFeed $
       mapMaybeChildren (\ e -> 
         if (elName e == unqual "channel")
-	 then Just (mapMaybeChildren (\ e2 -> 
-	                if (elName e2 == unqual "generator")
-			 then Just (node (unqual "generator") gen)
-			 else Nothing) e)
-	 else Nothing) f
+         then Just (mapMaybeChildren (\ e2 -> 
+                        if (elName e2 == unqual "generator")
+                         then Just (unode "generator" gen)
+                         else Nothing) e)
+         else Nothing) f
  where
   isSource dc  = dcElt dc == DC_Source
 
@@ -471,7 +471,7 @@ withItemPubDate dt fi =
        (_,[]) -> Feed.Types.RSS1Item i{RSS1.itemDC=DCItem{dcElt=DC_Date,dcText=dt}:RSS1.itemDC i}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "pubDate") dt) $
+        addChild (unode "pubDate" dt) $
             filterChildren (\ e -> elName e /= unqual "pubDate")
                            i
  where
@@ -494,7 +494,7 @@ withItemTitle tit fi =
       Feed.Types.RSS1Item  i{RSS1.itemTitle=tit}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "title") tit) $
+        addChild (unode "title" tit) $
             filterChildren (\ e -> elName e /= unqual "title")
                            i
 
@@ -513,7 +513,7 @@ withItemAuthor au fi =
        (_,[]) -> Feed.Types.RSS1Item i{RSS1.itemDC=DCItem{dcElt=DC_Creator,dcText=au}:RSS1.itemDC i}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "author") au) $
+        addChild (unode "author" au) $
             filterChildren (\ e -> elName e /= unqual "author")
                            i
  where
@@ -532,7 +532,7 @@ withItemFeedLink tit url fi =
       Feed.Types.RSS1Item  i{RSS1.itemTitle=tit}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "source") (Attr (unqual "url") url,tit)) $
+        addChild (unode "source" (Attr (unqual "url") url,tit)) $
             filterChildren (\ e -> elName e /= unqual "source")
                            i
 
@@ -552,7 +552,7 @@ withItemCommentLink url fi =
        (_,[]) -> Feed.Types.RSS1Item i{RSS1.itemDC=DCItem{dcElt=DC_Relation,dcText=url}:RSS1.itemDC i}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "comments") url) $
+        addChild (unode "comments" url) $
             filterChildren (\ e -> elName e /= unqual "comments")
                            i
  where
@@ -575,7 +575,7 @@ withItemEnclosure url ty len fi =
                                             }:RSS1.itemContent i}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild ((node (unqual "enclosure") url)
+        addChild ((unode "enclosure" url)
           {elAttribs= [ Attr (unqual "length") "0"
                       , Attr (unqual "type") (fromMaybe "text/html" ty)
                       ]}) $
@@ -598,7 +598,7 @@ withItemId isURL idS fi =
        (_,[]) -> Feed.Types.RSS1Item i{RSS1.itemDC=DCItem{dcElt=DC_Identifier,dcText=idS}:RSS1.itemDC i}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "guid") (Attr (unqual "isPermaLink") (showBool isURL),idS)) $
+        addChild (unode "guid" (Attr (unqual "isPermaLink") (showBool isURL),idS)) $
             filterChildren (\ e -> elName e /= unqual "guid")
                            i
  where
@@ -618,7 +618,7 @@ withItemDescription desc fi =
       Feed.Types.RSS1Item  i{RSS1.itemDesc=Just desc}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "description") desc) $
+        addChild (unode "description" desc) $
             filterChildren (\ e -> elName e /= unqual "description")
                            i
 
@@ -656,7 +656,7 @@ withItemLink url fi =
       Feed.Types.RSS1Item  i{RSS1.itemLink=url}
     Feed.Types.XMLItem i  ->
       Feed.Types.XMLItem $
-        addChild (node (unqual "link") url) $
+        addChild (unode "link" url) $
             filterChildren (\ e -> elName e /= unqual "link")
                            i
  where
@@ -686,7 +686,7 @@ withItemCategories cats fi =
                     cats ++ RSS1.itemDC i}
     Feed.Types.XMLItem i  -> Feed.Types.XMLItem $
          foldr (\ (t,mb) acc -> 
-                  addChild (node ( unqual "category")
+                  addChild (unode "category"
                                   (fromMaybe (\x -> [x])
                                              (fmap (\v -> (\ x -> [Attr (unqual "domain") v,x])) mb) $
                                              (Attr (unqual "term") t))
@@ -712,7 +712,7 @@ addChild a b = b { elContent = XML.Elem a : elContent b }
 
 mapMaybeChildren :: (XML.Element -> Maybe XML.Element)
                  -> XML.Element
-		 -> XML.Element
+                 -> XML.Element
 mapMaybeChildren f e = 
   case elContent e of
     [] -> e
