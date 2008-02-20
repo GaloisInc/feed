@@ -28,7 +28,7 @@ data Feed
     -- keep it as an untyped document.
  | XMLFeed  XML.Element
  
--- | The abstract type of feed items. Like the 'Feed' type, the
+-- | The abstract type of feed items. Like the 'Text.Feed.Types.Feed' type, the
 -- representation of a value is as one of the different RSS item\/entry
 -- variants.
 data Item
