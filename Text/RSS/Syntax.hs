@@ -68,7 +68,7 @@ data RSSItem
      , rssItemAttrs        :: [XML.Attr]
      , rssItemOther        :: [XML.Element]
      }
-     
+
 data RSSSource
  = RSSSource
      { rssSourceURL    :: URLString
