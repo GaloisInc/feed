@@ -39,14 +39,3 @@ library
                      Text.Feed.Translate
     Ghc-Options:     -Wall -O2
     Build-Depends:   base, xml >= 1.2.6
-
-executable feed-test {
-  build-depends:        base, xml >= 1.2.6
-  if flag(new-base) {
-    build-depends: base >= 3, containers, old-time, old-locale, filepath
-  } else {
-    build-depends: base < 3
-  }
-  main-is:              tests/Main.hs
-  ghc-options:          -Wall -fglasgow-exts
-}
