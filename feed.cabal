@@ -7,7 +7,7 @@ Synopsis:           Interfacing with RSS (v 0.9x, 2.x, 1.0) + Atom feeds.
 Description:        Interfacing with RSS (v 0.9x, 2.x, 1.0) + Atom feeds.
 Author:             Sigbjorn Finne
 Maintainer:         Don Stewart <dons@galois.com>
-Extra-Source-Files: tests/Main.hs tests/Setup.hs tests/rss-tests.cabal
+Extra-Source-Files: tests/Main.hs
 Cabal-version:   >= 1.2
 build-type: Simple
 
