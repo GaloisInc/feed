@@ -4,10 +4,12 @@
 -- Copyright : (c) Galois, Inc. 2008
 -- License   : BSD3
 --
--- Maintainer: Don Stewart <dons@galois.com>
+-- Maintainer: Isaac Potoczny-Jones <ijones@syntaxpolice.org>
 -- Stability : provisional
--- Portability:
---
+-- Description: The basic syntax for putting together feeds.  For instance,
+-- to create a feed with a single item item:
+--  (nullRSS \"rss title\" \"link\") {rssChannel=(nullChannel \"channel title\" \"link\") {rssItems=[(nullItem \"item title\")]}}
+
 --------------------------------------------------------------------
 
 
@@ -15,7 +17,9 @@ module Text.RSS.Syntax where
 
 import Text.XML.Light as XML
 
--- The Radio Userland version of RSS documents\/feeds.
+-- * Core Types
+
+-- ^The Radio Userland version of RSS documents\/feeds.
 -- (versions 0.9x, 2.x)
 data RSS
  = RSS
@@ -38,8 +42,8 @@ data RSSChannel
      , rssCopyright    :: Maybe String
      , rssEditor       :: Maybe String
      , rssWebMaster    :: Maybe String
-     , rssPubDate      :: Maybe DateString  -- rfc 822 conforming.
-     , rssLastUpdate   :: Maybe DateString
+     , rssPubDate      :: Maybe DateString  -- ^ rfc 822 conforming.
+     , rssLastUpdate   :: Maybe DateString  -- ^ rfc 822 conforming.
      , rssCategories   :: [RSSCategory]
      , rssGenerator    :: Maybe String
      , rssDocs         :: Maybe URLString
@@ -57,7 +61,7 @@ data RSSItem
  = RSSItem
      { rssItemTitle        :: Maybe String
      , rssItemLink         :: Maybe URLString
-     , rssItemDescription  :: Maybe String     -- if not present, the title is. (per spec, at least.)
+     , rssItemDescription  :: Maybe String     -- ^if not present, the title is. (per spec, at least.)
      , rssItemAuthor       :: Maybe String
      , rssItemCategories   :: [RSSCategory]
      , rssItemComments     :: Maybe URLString
@@ -130,8 +134,11 @@ data RSSTextInput
      , rssTextInputOther :: [XML.Element]
      }
 
--- default constructors:
-nullRSS :: String -> URLString -> RSS
+-- * Default Constructors:
+
+nullRSS :: String -- ^channel title
+        -> URLString -- ^channel link
+        -> RSS
 nullRSS title link = 
   RSS 
     { rssVersion = "2.0"
@@ -140,7 +147,9 @@ nullRSS title link =
     , rssOther   = []
     }
 
-nullChannel :: String -> URLString -> RSSChannel
+nullChannel :: String -- ^rssTitle
+            -> URLString -- ^rssLink
+            -> RSSChannel
 nullChannel title link = 
   RSSChannel
      { rssTitle        = title
@@ -166,7 +175,8 @@ nullChannel title link =
      , rssChannelOther = []
      }
 
-nullItem :: String -> RSSItem
+nullItem :: String -- ^title
+         -> RSSItem
 nullItem title = 
    RSSItem
      { rssItemTitle        = Just title
@@ -183,7 +193,9 @@ nullItem title =
      , rssItemOther        = []
      }
 
-nullSource :: URLString -> String -> RSSSource
+nullSource :: URLString -- ^source URL
+           -> String    -- ^title
+           -> RSSSource
 nullSource url title = 
   RSSSource
      { rssSourceURL    = url
@@ -191,7 +203,10 @@ nullSource url title =
      , rssSourceTitle  = title
      }
 
-nullEnclosure :: URLString -> Integer -> String -> RSSEnclosure
+nullEnclosure :: URLString -- ^enclosure URL
+              -> Integer   -- ^enclosure length
+              -> String    -- ^enclosure type
+              -> RSSEnclosure
 nullEnclosure url len ty = 
   RSSEnclosure
      { rssEnclosureURL     = url
@@ -200,7 +215,8 @@ nullEnclosure url len ty =
      , rssEnclosureAttrs   = []
      }
 
-newCategory :: String -> RSSCategory
+newCategory :: String  -- ^category Value
+            -> RSSCategory
 newCategory nm = 
   RSSCategory
      { rssCategoryDomain   = Nothing
@@ -208,7 +224,8 @@ newCategory nm =
      , rssCategoryValue    = nm
      }
 
-nullGuid :: String -> RSSGuid
+nullGuid :: String -- ^guid value
+         -> RSSGuid
 nullGuid v = 
   RSSGuid
      { rssGuidPermanentURL = Nothing
@@ -216,10 +233,14 @@ nullGuid v =
      , rssGuidValue        = v
      }
 
-nullPermaGuid :: String -> RSSGuid
+nullPermaGuid :: String -- ^guid value
+              -> RSSGuid
 nullPermaGuid v = (nullGuid v){rssGuidPermanentURL=Just True}
 
-nullImage :: URLString -> String -> URLString -> RSSImage
+nullImage :: URLString -- ^imageURL
+          -> String    -- ^imageTitle
+          -> URLString -- ^imageLink
+          -> RSSImage
 nullImage url title link = 
   RSSImage
      { rssImageURL     = url
@@ -242,7 +263,10 @@ nullCloud =
      , rssCloudAttrs    = []
      }
 
-nullTextInput :: String -> String -> URLString -> RSSTextInput
+nullTextInput :: String    -- ^inputTitle
+              -> String    -- ^inputName
+              -> URLString -- ^inputLink
+              -> RSSTextInput
 nullTextInput title nm link = 
   RSSTextInput
      { rssTextInputTitle = title
