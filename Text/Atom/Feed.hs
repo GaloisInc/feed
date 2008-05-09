@@ -4,7 +4,7 @@
 -- Copyright : (c) Galois, Inc. 2008
 -- License   : BSD3
 --
--- Maintainer: Don Stewart <dons@galois.com>
+-- Maintainer: Isaac Potoczny-Jones <ijones@syntaxpolice.org>
 -- Stability : provisional
 -- Portability:
 --
@@ -40,25 +40,6 @@ data Feed
       , feedOther        :: [XML.Element]
       }
 
-nullFeed :: String -> TextContent -> Date -> Feed
-nullFeed i t u = Feed
-      { feedId           = i
-      , feedTitle        = t
-      , feedUpdated      = u
-      , feedAuthors      = []
-      , feedCategories   = []
-      , feedContributors = []
-      , feedGenerator    = Nothing
-      , feedIcon         = Nothing
-      , feedLinks        = []
-      , feedLogo         = Nothing
-      , feedRights       = Nothing
-      , feedSubtitle     = Nothing
-      , feedEntries      = []
-      , feedAttrs        = []
-      , feedOther        = []
-      }
-
 data Entry
  = Entry
       { entryId           :: String
@@ -79,26 +60,6 @@ data Entry
       , entryOther        :: [XML.Element]
       }
 
-nullEntry :: String -> TextContent -> Date -> Entry
-nullEntry i t u = Entry
-      { entryId           = i
-      , entryTitle        = t
-      , entryUpdated      = u
-      , entryAuthors      = []
-      , entryCategories   = []
-      , entryContent      = Nothing
-      , entryContributor  = []
-      , entryLinks        = []
-      , entryPublished    = Nothing
-      , entryRights       = Nothing
-      , entrySource       = Nothing
-      , entrySummary      = Nothing
-      , entryInReplyTo    = Nothing
-      , entryInReplyTotal = Nothing
-      , entryAttrs        = []
-      , entryOther        = []
-      }
-
 data EntryContent
  = TextContent   String
  | HTMLContent   String
@@ -114,13 +75,6 @@ data Category
        , catOther  :: [XML.Element]  -- ^ unknown elements, for extensibility.
        }
 
-newCategory :: String -> Category
-newCategory t = Category
-  { catTerm   = t
-  , catScheme = Nothing
-  , catLabel  = Just t
-  , catOther  = []
-  }
 
 data Generator
  = Generator
@@ -128,14 +82,6 @@ data Generator
        , genVersion :: Maybe String
        , genText    :: String
        }
-
-nullGenerator :: String -> Generator
-nullGenerator t = Generator
-  { genURI     = Nothing
-  , genVersion = Nothing
-  , genText    = t
-  }
-
 
 data Link
  = Link
@@ -148,17 +94,6 @@ data Link
       , linkLength   :: Maybe String
       , linkOther    :: [XML.Element]
       }
-
-nullLink :: URI -> Link
-nullLink uri = Link
-  { linkHref      = uri
-  , linkRel       = Nothing
-  , linkType      = Nothing
-  , linkHrefLang  = Nothing
-  , linkTitle     = Nothing
-  , linkLength    = Nothing
-  , linkOther     = []
-  }
 
 data TextContent
  = TextString  String
@@ -181,22 +116,6 @@ data Source
       , sourceOther       :: [XML.Element]
       }
 
-nullSource :: Source
-nullSource = Source
-      { sourceAuthors     = []
-      , sourceCategories  = []
-      , sourceGenerator   = Nothing
-      , sourceIcon        = Nothing
-      , sourceId          = Nothing
-      , sourceLinks       = []
-      , sourceLogo        = Nothing
-      , sourceRights      = Nothing
-      , sourceSubtitle    = Nothing
-      , sourceTitle       = Nothing
-      , sourceUpdated     = Nothing
-      , sourceOther       = []
-      }
-  
 
 data Person
  = Person
@@ -205,14 +124,6 @@ data Person
      , personEmail :: Maybe String
      , personOther :: [XML.Element]
      }
-
-nullPerson :: Person
-nullPerson = Person
-  { personName  = ""
-  , personURI   = Nothing
-  , personEmail = Nothing
-  , personOther = []
-  }
 
 data InReplyTo
  = InReplyTo
@@ -229,3 +140,93 @@ data InReplyTotal
      { replyToTotal      :: Integer -- non-negative :)
      , replyToTotalOther :: [XML.Attr]
      }
+
+newCategory :: String -> Category
+newCategory t = Category
+  { catTerm   = t
+  , catScheme = Nothing
+  , catLabel  = Just t
+  , catOther  = []
+  }
+
+nullFeed :: String -> TextContent -> Date -> Feed
+nullFeed i t u = Feed
+      { feedId           = i
+      , feedTitle        = t
+      , feedUpdated      = u
+      , feedAuthors      = []
+      , feedCategories   = []
+      , feedContributors = []
+      , feedGenerator    = Nothing
+      , feedIcon         = Nothing
+      , feedLinks        = []
+      , feedLogo         = Nothing
+      , feedRights       = Nothing
+      , feedSubtitle     = Nothing
+      , feedEntries      = []
+      , feedAttrs        = []
+      , feedOther        = []
+      }
+
+nullEntry :: String -> TextContent -> Date -> Entry
+nullEntry i t u = Entry
+      { entryId           = i
+      , entryTitle        = t
+      , entryUpdated      = u
+      , entryAuthors      = []
+      , entryCategories   = []
+      , entryContent      = Nothing
+      , entryContributor  = []
+      , entryLinks        = []
+      , entryPublished    = Nothing
+      , entryRights       = Nothing
+      , entrySource       = Nothing
+      , entrySummary      = Nothing
+      , entryInReplyTo    = Nothing
+      , entryInReplyTotal = Nothing
+      , entryAttrs        = []
+      , entryOther        = []
+      }
+
+
+nullGenerator :: String -> Generator
+nullGenerator t = Generator
+  { genURI     = Nothing
+  , genVersion = Nothing
+  , genText    = t
+  }
+
+nullLink :: URI -> Link
+nullLink uri = Link
+  { linkHref      = uri
+  , linkRel       = Nothing
+  , linkType      = Nothing
+  , linkHrefLang  = Nothing
+  , linkTitle     = Nothing
+  , linkLength    = Nothing
+  , linkOther     = []
+  }
+
+nullSource :: Source
+nullSource = Source
+      { sourceAuthors     = []
+      , sourceCategories  = []
+      , sourceGenerator   = Nothing
+      , sourceIcon        = Nothing
+      , sourceId          = Nothing
+      , sourceLinks       = []
+      , sourceLogo        = Nothing
+      , sourceRights      = Nothing
+      , sourceSubtitle    = Nothing
+      , sourceTitle       = Nothing
+      , sourceUpdated     = Nothing
+      , sourceOther       = []
+      }
+  
+nullPerson :: Person
+nullPerson = Person
+  { personName  = ""
+  , personURI   = Nothing
+  , personEmail = Nothing
+  , personOther = []
+  }
