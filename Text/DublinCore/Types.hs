@@ -6,11 +6,7 @@
 --
 -- Maintainer: Don Stewart <dons@galois.com>
 -- Stability : provisional
--- Portability:
---
---------------------------------------------------------------------
---
--- Representing the DublinCore metadata elements in Haskell. The Dublin
+-- Description: Representing the DublinCore metadata elements in Haskell. The Dublin
 -- Core Metadata Element Set. See: <http://dublincore.org/>
 -- 
 module Text.DublinCore.Types where

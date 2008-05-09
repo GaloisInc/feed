@@ -6,9 +6,7 @@
 --
 -- Maintainer: Don Stewart <dons@galois.com>
 -- Stability : provisional
--- Portability:
---
--- Serializing APP types (as XML.)
+-- Description: Serializing APP types (as XML.)
 --
 --------------------------------------------------------------------
 module Text.Atom.Pub.Export where

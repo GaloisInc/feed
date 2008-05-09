@@ -6,7 +6,7 @@
 --
 -- Maintainer: Don Stewart <dons@galois.com>
 -- Stability : provisional
--- Portability:
+-- Description: Converting from XML to RSS
 --
 --------------------------------------------------------------------
 

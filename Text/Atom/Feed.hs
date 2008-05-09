@@ -14,6 +14,8 @@ module Text.Atom.Feed where
 
 import qualified Text.XML.Light as XML
 
+-- *Core types
+
 -- NOTE: In the future we may want to have more structured
 -- types for these.
 type URI        = String
@@ -141,7 +143,10 @@ data InReplyTotal
      , replyToTotalOther :: [XML.Attr]
      }
 
-newCategory :: String -> Category
+-- *Smart Constructors
+
+newCategory :: String -- ^catTerm
+            -> Category
 newCategory t = Category
   { catTerm   = t
   , catScheme = Nothing
@@ -149,7 +154,10 @@ newCategory t = Category
   , catOther  = []
   }
 
-nullFeed :: String -> TextContent -> Date -> Feed
+nullFeed :: String  -- ^feedId
+         -> TextContent -- ^feedTitle
+         -> Date -- ^feedUpdated
+         -> Feed
 nullFeed i t u = Feed
       { feedId           = i
       , feedTitle        = t
@@ -168,7 +176,10 @@ nullFeed i t u = Feed
       , feedOther        = []
       }
 
-nullEntry :: String -> TextContent -> Date -> Entry
+nullEntry :: String -- ^entryId
+          -> TextContent -- ^entryTitle
+          -> Date -- ^entryUpdated
+          -> Entry
 nullEntry i t u = Entry
       { entryId           = i
       , entryTitle        = t
@@ -189,14 +200,16 @@ nullEntry i t u = Entry
       }
 
 
-nullGenerator :: String -> Generator
+nullGenerator :: String -- ^genText
+              -> Generator
 nullGenerator t = Generator
   { genURI     = Nothing
   , genVersion = Nothing
   , genText    = t
   }
 
-nullLink :: URI -> Link
+nullLink :: URI -- ^linkHref
+         -> Link
 nullLink uri = Link
   { linkHref      = uri
   , linkRel       = Nothing
