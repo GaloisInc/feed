@@ -228,6 +228,7 @@ bagLeaves be =
         fmap strContent (pQNode (qualName (rdfNS,rdfPrefix) "li") e))
     (fromMaybe [] $ fmap children $ pQNode (qualName (rdfNS,rdfPrefix) "Bag") be)
 
+{-
 bagElements :: XML.Element -> [XML.Element]
 bagElements be = 
   mapMaybe 
@@ -235,6 +236,7 @@ bagElements be =
       guard (elName e == rdfName "li")
       return e)
     (fromMaybe [] $ fmap children $ pQNode (rdfName "Bag") be)
+-}
 
 seqLeaves :: XML.Element -> [URIString]
 seqLeaves se = 

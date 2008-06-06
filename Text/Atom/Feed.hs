@@ -4,7 +4,7 @@
 -- Copyright : (c) Galois, Inc. 2008
 -- License   : BSD3
 --
--- Maintainer: Don Stewart <dons@galois.com>
+-- Maintainer: Isaac Potoczny-Jones <ijones@syntaxpolice.org>
 -- Stability : provisional
 -- Portability:
 --
@@ -13,6 +13,8 @@
 module Text.Atom.Feed where
 
 import qualified Text.XML.Light as XML
+
+-- *Core types
 
 -- NOTE: In the future we may want to have more structured
 -- types for these.
@@ -41,25 +43,6 @@ data Feed
       }
      deriving (Show)
 
-nullFeed :: String -> TextContent -> Date -> Feed
-nullFeed i t u = Feed
-      { feedId           = i
-      , feedTitle        = t
-      , feedUpdated      = u
-      , feedAuthors      = []
-      , feedCategories   = []
-      , feedContributors = []
-      , feedGenerator    = Nothing
-      , feedIcon         = Nothing
-      , feedLinks        = []
-      , feedLogo         = Nothing
-      , feedRights       = Nothing
-      , feedSubtitle     = Nothing
-      , feedEntries      = []
-      , feedAttrs        = []
-      , feedOther        = []
-      }
-
 data Entry
  = Entry
       { entryId           :: String
@@ -81,26 +64,6 @@ data Entry
       }
      deriving (Show)
 
-nullEntry :: String -> TextContent -> Date -> Entry
-nullEntry i t u = Entry
-      { entryId           = i
-      , entryTitle        = t
-      , entryUpdated      = u
-      , entryAuthors      = []
-      , entryCategories   = []
-      , entryContent      = Nothing
-      , entryContributor  = []
-      , entryLinks        = []
-      , entryPublished    = Nothing
-      , entryRights       = Nothing
-      , entrySource       = Nothing
-      , entrySummary      = Nothing
-      , entryInReplyTo    = Nothing
-      , entryInReplyTotal = Nothing
-      , entryAttrs        = []
-      , entryOther        = []
-      }
-
 data EntryContent
  = TextContent   String
  | HTMLContent   String
@@ -118,13 +81,6 @@ data Category
        }
      deriving (Show)
 
-newCategory :: String -> Category
-newCategory t = Category
-  { catTerm   = t
-  , catScheme = Nothing
-  , catLabel  = Just t
-  , catOther  = []
-  }
 
 data Generator
  = Generator
@@ -133,14 +89,6 @@ data Generator
        , genText    :: String
        }
      deriving (Eq, Show)
-
-nullGenerator :: String -> Generator
-nullGenerator t = Generator
-  { genURI     = Nothing
-  , genVersion = Nothing
-  , genText    = t
-  }
-
 
 data Link
  = Link
@@ -154,17 +102,6 @@ data Link
       , linkOther    :: [XML.Element]
       }
      deriving (Show)
-
-nullLink :: URI -> Link
-nullLink uri = Link
-  { linkHref      = uri
-  , linkRel       = Nothing
-  , linkType      = Nothing
-  , linkHrefLang  = Nothing
-  , linkTitle     = Nothing
-  , linkLength    = Nothing
-  , linkOther     = []
-  }
 
 data TextContent
  = TextString  String
@@ -189,22 +126,6 @@ data Source
       }
      deriving (Show)
 
-nullSource :: Source
-nullSource = Source
-      { sourceAuthors     = []
-      , sourceCategories  = []
-      , sourceGenerator   = Nothing
-      , sourceIcon        = Nothing
-      , sourceId          = Nothing
-      , sourceLinks       = []
-      , sourceLogo        = Nothing
-      , sourceRights      = Nothing
-      , sourceSubtitle    = Nothing
-      , sourceTitle       = Nothing
-      , sourceUpdated     = Nothing
-      , sourceOther       = []
-      }
-  
 
 data Person
  = Person
@@ -214,14 +135,6 @@ data Person
      , personOther :: [XML.Element]
      }
      deriving (Show)
-
-nullPerson :: Person
-nullPerson = Person
-  { personName  = ""
-  , personURI   = Nothing
-  , personEmail = Nothing
-  , personOther = []
-  }
 
 data InReplyTo
  = InReplyTo
@@ -240,3 +153,104 @@ data InReplyTotal
      , replyToTotalOther :: [XML.Attr]
      }
      deriving (Show)
+
+-- *Smart Constructors
+
+newCategory :: String -- ^catTerm
+            -> Category
+newCategory t = Category
+  { catTerm   = t
+  , catScheme = Nothing
+  , catLabel  = Just t
+  , catOther  = []
+  }
+
+nullFeed :: String  -- ^feedId
+         -> TextContent -- ^feedTitle
+         -> Date -- ^feedUpdated
+         -> Feed
+nullFeed i t u = Feed
+      { feedId           = i
+      , feedTitle        = t
+      , feedUpdated      = u
+      , feedAuthors      = []
+      , feedCategories   = []
+      , feedContributors = []
+      , feedGenerator    = Nothing
+      , feedIcon         = Nothing
+      , feedLinks        = []
+      , feedLogo         = Nothing
+      , feedRights       = Nothing
+      , feedSubtitle     = Nothing
+      , feedEntries      = []
+      , feedAttrs        = []
+      , feedOther        = []
+      }
+
+nullEntry :: String -- ^entryId
+          -> TextContent -- ^entryTitle
+          -> Date -- ^entryUpdated
+          -> Entry
+nullEntry i t u = Entry
+      { entryId           = i
+      , entryTitle        = t
+      , entryUpdated      = u
+      , entryAuthors      = []
+      , entryCategories   = []
+      , entryContent      = Nothing
+      , entryContributor  = []
+      , entryLinks        = []
+      , entryPublished    = Nothing
+      , entryRights       = Nothing
+      , entrySource       = Nothing
+      , entrySummary      = Nothing
+      , entryInReplyTo    = Nothing
+      , entryInReplyTotal = Nothing
+      , entryAttrs        = []
+      , entryOther        = []
+      }
+
+
+nullGenerator :: String -- ^genText
+              -> Generator
+nullGenerator t = Generator
+  { genURI     = Nothing
+  , genVersion = Nothing
+  , genText    = t
+  }
+
+nullLink :: URI -- ^linkHref
+         -> Link
+nullLink uri = Link
+  { linkHref      = uri
+  , linkRel       = Nothing
+  , linkType      = Nothing
+  , linkHrefLang  = Nothing
+  , linkTitle     = Nothing
+  , linkLength    = Nothing
+  , linkOther     = []
+  }
+
+nullSource :: Source
+nullSource = Source
+      { sourceAuthors     = []
+      , sourceCategories  = []
+      , sourceGenerator   = Nothing
+      , sourceIcon        = Nothing
+      , sourceId          = Nothing
+      , sourceLinks       = []
+      , sourceLogo        = Nothing
+      , sourceRights      = Nothing
+      , sourceSubtitle    = Nothing
+      , sourceTitle       = Nothing
+      , sourceUpdated     = Nothing
+      , sourceOther       = []
+      }
+  
+nullPerson :: Person
+nullPerson = Person
+  { personName  = ""
+  , personURI   = Nothing
+  , personEmail = Nothing
+  , personOther = []
+  }

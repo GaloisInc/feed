@@ -162,15 +162,15 @@ checkCat e = mkTree []
   , checkLabel e
   ]
  where
-  checkScheme e = 
-    case pAttrs "scheme" e of
+  checkScheme e' = 
+    case pAttrs "scheme" e' of
       [] -> valid
       (_:xs)
         | null xs   -> valid
 	| otherwise -> demand ("Expected at most one 'scheme' attribute, found: " ++ show (1+length xs))
 
-  checkLabel e =
-    case pAttrs "label" e of
+  checkLabel e' =
+    case pAttrs "label" e' of
       [] -> valid
       (_:xs)
         | null xs   -> valid
@@ -218,7 +218,7 @@ checkContent e = mkTree (flattenT (mkTree [] [type_valid, src_valid]))
       [_]   ->
         case types of
 	  []    -> advice "It is advisable to provide a 'type' along with a 'src' attribute"
-	  (t:_) -> valid
+	  (_:_) -> valid
 {-
 	    case parseMIMEType t of
 	      Just{} -> valid

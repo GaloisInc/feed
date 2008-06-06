@@ -6,7 +6,7 @@
 --
 -- Maintainer: Don Stewart <dons@galois.com>
 -- Stability : provisional
--- Portability:
+-- Description: Module for an abstraction layer between different kinds of feeds.
 --
 --------------------------------------------------------------------
 
