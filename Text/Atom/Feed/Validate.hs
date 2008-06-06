@@ -9,6 +9,7 @@ import Data.List
 import Data.Maybe
 
 data VTree a = VNode [a] [VTree a] | VLeaf [a]
+     deriving (Eq, Show)
 
 type ValidatorResult = VTree (Bool,String)
 

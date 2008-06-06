@@ -21,6 +21,7 @@ data DCItem
      { dcElt  :: DCInfo
      , dcText :: String
      }
+     deriving (Eq, Show)
 
 -- | The Dublin Core Metadata Element Set, all 15 of them (plus an extension constructor.)
 data DCInfo
@@ -40,7 +41,7 @@ data DCInfo
  | DC_Coverage      -- ^ The extent or scope of the content of the resource.
  | DC_Rights        -- ^ Information about rights held in and over the resource.
  | DC_Other String  -- ^ Other; data type extension mechanism.
-   deriving ( Eq )
+     deriving (Eq, Show)
 
 infoToTag :: DCInfo -> String
 infoToTag i =

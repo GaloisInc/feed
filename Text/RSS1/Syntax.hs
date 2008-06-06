@@ -30,6 +30,7 @@ data Feed
         , feedOther     :: [XML.Element]
         , feedAttrs     :: [XML.Attr]
         }
+        deriving (Show)
 
 data Channel
  = Channel
@@ -51,6 +52,7 @@ data Channel
         , channelOther        :: [XML.Element]
         , channelAttrs        :: [XML.Attr]
         }
+        deriving (Show)
 
 data Image
  = Image
@@ -62,6 +64,7 @@ data Image
         , imageOther  :: [XML.Element]
         , imageAttrs  :: [XML.Attr]
         }
+        deriving (Show)
 
 data Item
  = Item
@@ -75,6 +78,7 @@ data Item
         , itemOther   :: [XML.Element]
         , itemAttrs   :: [XML.Attr]
         }
+        deriving (Show)
 
 data TextInputInfo
  = TextInputInfo
@@ -87,6 +91,7 @@ data TextInputInfo
         , textInputOther :: [XML.Element]
         , textInputAttrs :: [XML.Attr]
         }
+        deriving (Show)
 
 data TaxonomyTopic
  = TaxonomyTopic
@@ -98,6 +103,7 @@ data TaxonomyTopic
         , taxonomyDC     :: [DCItem]
         , taxonomyOther  :: [XML.Element]
         }
+        deriving (Show)
 
 
 data UpdatePeriod 
@@ -106,6 +112,7 @@ data UpdatePeriod
  | Update_Weekly
  | Update_Monthly
  | Update_Yearly
+        deriving (Eq, Show)
 
 data ContentInfo
  = ContentInfo
@@ -114,6 +121,7 @@ data ContentInfo
         , contentEncoding :: Maybe URIString
         , contentValue    :: Maybe String -- should be: RDFValue
         }
+        deriving (Eq, Show)
 
 --default constructors:
 nullFeed :: URIString -> TitleString -> Feed

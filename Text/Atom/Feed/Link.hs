@@ -48,6 +48,7 @@ data LinkRelation               -- relevant RFC:
  | LinkSelf                     -- http://www.rfc-editor.org/rfc/rfc4287.txt
  | LinkVia                      -- http://www.rfc-editor.org/rfc/rfc4287.txt
  | LinkOther String
+     deriving (Eq, Show)
 
 showLinkRelation :: LinkRelation -> String
 showLinkRelation lr = 

@@ -1,5 +1,5 @@
 Name:               feed
-Version:            0.3.1
+Version:            0.3.2
 License:            BSD3
 License-file:       LICENSE
 Category:           Text
@@ -37,5 +37,5 @@ library
                      Text.Feed.Query
                      Text.Feed.Constructor
                      Text.Feed.Translate
-    Ghc-Options:     -Wall -O2
+    Ghc-Options:     -Wall
     Build-Depends:   base, xml >= 1.2.6

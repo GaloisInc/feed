@@ -41,5 +41,6 @@ data Collection
 data Categories
  = CategoriesExternal URI
  | Categories (Maybe Bool) (Maybe URI) [Category]
+     deriving (Show)
 
 newtype Accept = Accept { acceptType :: String }

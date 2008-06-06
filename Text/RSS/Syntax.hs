@@ -24,6 +24,7 @@ data RSS
      , rssChannel :: RSSChannel
      , rssOther   :: [XML.Element]
      }
+     deriving (Show)
 
 type URLString  = String
 type DateString = String
@@ -52,6 +53,7 @@ data RSSChannel
      , rssSkipDays     :: Maybe [String]
      , rssChannelOther :: [XML.Element]
      }
+     deriving (Show)
 
 data RSSItem
  = RSSItem
@@ -68,6 +70,7 @@ data RSSItem
      , rssItemAttrs        :: [XML.Attr]
      , rssItemOther        :: [XML.Element]
      }
+     deriving (Show)
 
 data RSSSource
  = RSSSource
@@ -75,6 +78,7 @@ data RSSSource
      , rssSourceAttrs  :: [XML.Attr]
      , rssSourceTitle  :: String
      }
+     deriving (Show)
 
 data RSSEnclosure
  = RSSEnclosure
@@ -83,6 +87,7 @@ data RSSEnclosure
      , rssEnclosureType    :: String
      , rssEnclosureAttrs   :: [XML.Attr]
      }
+     deriving (Show)
 
 data RSSCategory
  = RSSCategory
@@ -90,6 +95,7 @@ data RSSCategory
      , rssCategoryAttrs    :: [XML.Attr]
      , rssCategoryValue    :: String
      }
+     deriving (Show)
 
 data RSSGuid
  = RSSGuid
@@ -97,6 +103,7 @@ data RSSGuid
      , rssGuidAttrs        :: [XML.Attr]
      , rssGuidValue        :: String
      }
+     deriving (Show)
 
 
 data RSSImage
@@ -109,6 +116,7 @@ data RSSImage
      , rssImageDesc    :: Maybe String
      , rssImageOther   :: [XML.Element]
      }
+     deriving (Show)
 
 data RSSCloud
  = RSSCloud
@@ -119,6 +127,7 @@ data RSSCloud
      , rssCloudProtocol :: Maybe String
      , rssCloudAttrs    :: [XML.Attr]
      }
+     deriving (Show)
 
 data RSSTextInput
  = RSSTextInput
@@ -129,6 +138,7 @@ data RSSTextInput
      , rssTextInputAttrs :: [XML.Attr]
      , rssTextInputOther :: [XML.Element]
      }
+     deriving (Show)
 
 -- default constructors:
 nullRSS :: String -> URLString -> RSS

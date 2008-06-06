@@ -39,6 +39,7 @@ data Feed
       , feedAttrs        :: [XML.Attr]
       , feedOther        :: [XML.Element]
       }
+     deriving (Show)
 
 nullFeed :: String -> TextContent -> Date -> Feed
 nullFeed i t u = Feed
@@ -78,6 +79,7 @@ data Entry
       , entryAttrs        :: [XML.Attr]
       , entryOther        :: [XML.Element]
       }
+     deriving (Show)
 
 nullEntry :: String -> TextContent -> Date -> Entry
 nullEntry i t u = Entry
@@ -105,6 +107,7 @@ data EntryContent
  | XHTMLContent  XML.Element
  | MixedContent  (Maybe String) [XML.Content]
  | ExternalContent (Maybe MediaType) URI
+     deriving (Show)
 
 data Category
  = Category
@@ -113,6 +116,7 @@ data Category
        , catLabel  :: Maybe String   -- ^ human-readable label of the category
        , catOther  :: [XML.Element]  -- ^ unknown elements, for extensibility.
        }
+     deriving (Show)
 
 newCategory :: String -> Category
 newCategory t = Category
@@ -128,6 +132,7 @@ data Generator
        , genVersion :: Maybe String
        , genText    :: String
        }
+     deriving (Eq, Show)
 
 nullGenerator :: String -> Generator
 nullGenerator t = Generator
@@ -148,6 +153,7 @@ data Link
       , linkLength   :: Maybe String
       , linkOther    :: [XML.Element]
       }
+     deriving (Show)
 
 nullLink :: URI -> Link
 nullLink uri = Link
@@ -164,6 +170,7 @@ data TextContent
  = TextString  String
  | HTMLString  String
  | XHTMLString XML.Element
+     deriving (Show)
 
 data Source
  = Source
@@ -180,6 +187,7 @@ data Source
       , sourceUpdated     :: Maybe Date
       , sourceOther       :: [XML.Element]
       }
+     deriving (Show)
 
 nullSource :: Source
 nullSource = Source
@@ -205,6 +213,7 @@ data Person
      , personEmail :: Maybe String
      , personOther :: [XML.Element]
      }
+     deriving (Show)
 
 nullPerson :: Person
 nullPerson = Person
@@ -223,9 +232,11 @@ data InReplyTo
      , replyToOther   :: [XML.Attr]
      , replyToContent :: [XML.Content]
      }
+     deriving (Show)
 
 data InReplyTotal
  = InReplyTotal
      { replyToTotal      :: Integer -- non-negative :)
      , replyToTotalOther :: [XML.Attr]
      }
+     deriving (Show)
