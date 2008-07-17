@@ -119,7 +119,7 @@ xmlFeed f = ( atomNode "feed"
 
 
 xmlEntry :: Entry -> XML.Element
-xmlEntry e  = atomNode "entry"
+xmlEntry e  = ( atomNode "entry"
             $ map Elem
             $ [ xmlId (entryId e) ]
            ++ [ xmlTitle (entryTitle e) ]
@@ -135,7 +135,9 @@ xmlEntry e  = atomNode "entry"
            ++ mb  xmlSummary (entrySummary e)
 	   ++ mb  xmlInReplyTo (entryInReplyTo e)
 	   ++ mb  xmlInReplyTotal (entryInReplyTotal e)
-           ++ entryOther e
+           ++ entryOther e )
+
+              { elAttribs = entryAttrs e }
 
 xmlContent :: EntryContent -> XML.Element
 xmlContent cont = case cont of
