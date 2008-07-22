@@ -99,6 +99,7 @@ data Link
       , linkHrefLang :: Maybe String
       , linkTitle    :: Maybe String
       , linkLength   :: Maybe String
+      , linkAttrs    :: [XML.Attr]
       , linkOther    :: [XML.Element]
       }
      deriving (Show)
@@ -228,6 +229,7 @@ nullLink uri = Link
   , linkHrefLang  = Nothing
   , linkTitle     = Nothing
   , linkLength    = Nothing
+  , linkAttrs     = []
   , linkOther     = []
   }
 

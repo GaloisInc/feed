@@ -174,6 +174,7 @@ xmlLink l = (atomNode "link" (map Elem (linkOther l)))
                         ++ mb (atomAttr "hreflang") (linkHrefLang l)
                         ++ mb (atomAttr "title") (linkTitle l)
                         ++ mb (atomAttr "length") (linkLength l)
+			++ linkAttrs l
               }
 
 xmlSource :: Source -> Element

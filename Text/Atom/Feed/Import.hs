@@ -169,9 +169,15 @@ pLink e =
        , linkHrefLang = pAttr "hreflang" e
        , linkTitle    = pAttr "title" e
        , linkLength   = pAttr "length" e
+       , linkAttrs    = other_as (elAttribs e)
        , linkOther    = []
        }
+ where
+   other_as as = filter (\ a -> not (attrKey a `elem` known_attrs))
+   	                as
 
+   known_attrs = map atomName
+      [ "href", "rel", "type", "hreflang", "title", "length"]
 
 
 pEntry :: XML.Element -> Maybe Entry
