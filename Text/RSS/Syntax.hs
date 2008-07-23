@@ -31,7 +31,7 @@ data RSS
      deriving (Show)
 
 type URLString  = String
-type DateString = String
+type DateString = String -- ^ rfc 822 conforming.
 
 data RSSChannel
  = RSSChannel
