@@ -37,5 +37,6 @@ library
                      Text.Feed.Query
                      Text.Feed.Constructor
                      Text.Feed.Translate
+                     Text.Feed.Util
     Ghc-Options:     -Wall
-    Build-Depends:   base, xml >= 1.2.6
+    Build-Depends:   base, haskell98, xml >= 1.2.6
