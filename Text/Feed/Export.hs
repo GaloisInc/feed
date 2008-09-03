@@ -11,7 +11,9 @@
 --------------------------------------------------------------------
 
 
-module Text.Feed.Export where
+module Text.Feed.Export 
+       ( Text.Feed.Export.xmlFeed  -- :: Feed -> XML.Element
+       ) where
 
 import Text.Feed.Types
 
@@ -21,6 +23,8 @@ import Text.RSS1.Export as RSS1
 
 import Text.XML.Light as XML
 
+-- | 'xmlFeed f' serializes a @Feed@ document into a conforming
+-- XML toplevel element.
 xmlFeed :: Feed -> XML.Element
 xmlFeed fe =
   case fe of
