@@ -24,9 +24,11 @@ import Text.XML.Light as XML
 
 import Control.Monad
 
+import System.IO.UTF8 as UTF8 ( readFile ) 
+
 parseFeedFromFile :: FilePath -> IO Feed
 parseFeedFromFile fp = do
-  ls <- readFile fp
+  ls <- UTF8.readFile fp
   case parseFeedString ls of
     Nothing -> fail "parseFeedFromFile: not a well-formed XML content"
     Just f  -> return f
