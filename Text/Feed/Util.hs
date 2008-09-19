@@ -1,3 +1,14 @@
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.Feed.Util
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Sigbjorn Finne <sof@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
 module Text.Feed.Util where
 
 import Text.Feed.Types

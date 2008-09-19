@@ -4,7 +4,7 @@
 -- Copyright : (c) Galois, Inc. 2008
 -- License   : BSD3
 --
--- Maintainer: Isaac Potoczny-Jones <ijones@syntaxpolice.org>
+-- Maintainer: Sigbjorn Finne <sof@galois.com>
 -- Stability : provisional
 -- Portability:
 --

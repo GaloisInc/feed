@@ -4,7 +4,7 @@
 -- Copyright : (c) Galois, Inc. 2007-2008
 -- License   : BSD3
 --
--- Maintainer: Don Stewart <dons@galois.com>
+-- Maintainer: Sigbjorn Finne <sof@galois.com>
 -- Stability : provisional
 -- Description: Convert from XML to Atom
 --

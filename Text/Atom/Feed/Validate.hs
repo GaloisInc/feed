@@ -1,3 +1,14 @@
+--------------------------------------------------------------------
+-- |
+-- Module    : Text.Atom.Feed.Validate
+-- Copyright : (c) Galois, Inc. 2008
+-- License   : BSD3
+--
+-- Maintainer: Sigbjorn Finne <sof@galois.com>
+-- Stability : provisional
+-- Portability:
+--
+--------------------------------------------------------------------
 module Text.Atom.Feed.Validate where
 
 import Text.Atom.Feed.Import

@@ -4,7 +4,7 @@
 -- Copyright : (c) Galois, Inc. 2008
 -- License   : BSD3
 --
--- Maintainer: Don Stewart <dons@galois.com>
+-- Maintainer: Sigbjorn Finne <sof@galois.com>
 -- Stability : provisional
 -- Description: Representing the DublinCore metadata elements in Haskell. The Dublin
 -- Core Metadata Element Set. See: <http://dublincore.org/>
