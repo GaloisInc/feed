@@ -35,8 +35,8 @@ pQNode x es    = listToMaybe (pQNodes x es)
 pLeaf        :: String -> [XML.Element] -> Maybe String
 pLeaf x es    = strContent `fmap` pNode x es
 
-pLeafNS        :: Maybe String -> Maybe String -> String -> [XML.Element] -> Maybe String
-pLeafNS ns pr x es  = strContent `fmap` (pQNode (blank_name{qName=x,qURI=ns,qPrefix=pr}) es)
+pQLeaf      :: QName -> [XML.Element] -> Maybe String
+pQLeaf x es  = strContent `fmap` (pQNode x es)
 
 pAttr        :: String -> XML.Element -> Maybe String
 pAttr x e     = lookup (qualName x) [ (k,v) | Attr k v <- elAttribs e ]
@@ -49,6 +49,9 @@ children e    = onlyElems (elContent e)
 
 qualName :: String -> QName
 qualName x = QName{qName=x,qURI=Nothing,qPrefix=Nothing}
+
+dcName :: String -> QName
+dcName x = blank_name{qName=x,qURI=dcNS,qPrefix=dcPrefix}
 
 elementToRSS :: XML.Element -> Maybe RSS
 elementToRSS e = do
@@ -78,14 +81,14 @@ elementToChannel e = do
      , rssLink  = link
      , rssDescription = desc
      , rssItems = pMany "item" elementToItem es
-     , rssLanguage   = pLeaf "language" es
+     , rssLanguage   = pLeaf "language" es `mplus` pQLeaf (dcName "lang") es
      , rssCopyright  = pLeaf "copyright" es
-     , rssEditor     = pLeaf "managingEditor" es
+     , rssEditor     = pLeaf "managingEditor" es `mplus` pQLeaf (dcName "creator") es
      , rssWebMaster  = pLeaf "webMaster" es
-     , rssPubDate    = pLeaf "pubDate" es
-     , rssLastUpdate = pLeaf "lastBuildDate" es
+     , rssPubDate    = pLeaf "pubDate" es `mplus` pQLeaf (dcName "date") es
+     , rssLastUpdate = pLeaf "lastBuildDate" es `mplus` pQLeaf (dcName "date") es
      , rssCategories = pMany "category"  elementToCategory es
-     , rssGenerator  = pLeaf "generator" es
+     , rssGenerator  = pLeaf "generator" es `mplus` pQLeaf (dcName "source") es
      , rssDocs       = pLeaf "docs" es
      , rssCloud      = pNode "cloud" es >>= elementToCloud
      , rssTTL        = pLeaf "ttl" es   >>= readInt
@@ -165,12 +168,12 @@ elementToItem e = do
     { rssItemTitle       = pLeaf "title" es
     , rssItemLink        = pLeaf "link" es
     , rssItemDescription = pLeaf "description" es
-    , rssItemAuthor      = pLeaf "author" es `mplus` pLeafNS dcNS dcPrefix "creator" es
+    , rssItemAuthor      = pLeaf "author" es `mplus` pQLeaf (dcName "creator") es
     , rssItemCategories  = pMany "category" elementToCategory es
     , rssItemComments    = pLeaf "comments" es
     , rssItemEnclosure   = pNode "enclosure" es >>= elementToEnclosure
     , rssItemGuid        = pNode "guid" es      >>= elementToGuid
-    , rssItemPubDate     = pLeaf "pubDate" es
+    , rssItemPubDate     = pLeaf "pubDate" es `mplus` pQLeaf (dcName "date") es
     , rssItemSource      = pNode "source" es    >>= elementToSource
     , rssItemAttrs       = elAttribs e
     , rssItemOther       = filter (\ e1 -> not (elName e1 `elem` known_item_elts)) es
