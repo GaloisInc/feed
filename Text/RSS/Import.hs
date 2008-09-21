@@ -13,20 +13,30 @@
 module Text.RSS.Import where
 
 import Text.RSS.Syntax
+import Text.RSS1.Utils ( dcNS, dcPrefix )
 import Text.XML.Light as XML
 
 import Data.Maybe (listToMaybe, mapMaybe)
 import Data.Char  (isSpace )
-import Control.Monad (guard)
+import Control.Monad (guard,mplus)
 
 pNodes       :: String -> [XML.Element] -> [XML.Element]
 pNodes x es   = filter ((qualName x ==) . elName) es
 
+pQNodes       :: QName -> [XML.Element] -> [XML.Element]
+pQNodes x es   = filter ((x==) . elName) es
+
 pNode        :: String -> [XML.Element] -> Maybe XML.Element
 pNode x es    = listToMaybe (pNodes x es)
 
+pQNode        :: QName -> [XML.Element] -> Maybe XML.Element
+pQNode x es    = listToMaybe (pQNodes x es)
+
 pLeaf        :: String -> [XML.Element] -> Maybe String
 pLeaf x es    = strContent `fmap` pNode x es
+
+pLeafNS        :: Maybe String -> Maybe String -> String -> [XML.Element] -> Maybe String
+pLeafNS ns pr x es  = strContent `fmap` (pQNode (blank_name{qName=x,qURI=ns,qPrefix=pr}) es)
 
 pAttr        :: String -> XML.Element -> Maybe String
 pAttr x e     = lookup (qualName x) [ (k,v) | Attr k v <- elAttribs e ]
@@ -155,7 +165,7 @@ elementToItem e = do
     { rssItemTitle       = pLeaf "title" es
     , rssItemLink        = pLeaf "link" es
     , rssItemDescription = pLeaf "description" es
-    , rssItemAuthor      = pLeaf "author" es
+    , rssItemAuthor      = pLeaf "author" es `mplus` pLeafNS dcNS dcPrefix "creator" es
     , rssItemCategories  = pMany "category" elementToCategory es
     , rssItemComments    = pLeaf "comments" es
     , rssItemEnclosure   = pNode "enclosure" es >>= elementToEnclosure
