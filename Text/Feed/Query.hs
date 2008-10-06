@@ -36,11 +36,13 @@ module Text.Feed.Query
        , getItemDate              -- :: ItemGetter (DateString)
        , getItemAuthor            -- :: ItemGetter (String)
        , getItemCommentLink       -- :: ItemGetter (URLString)
-       , getItemEnclosure         -- :: ItemGetter (String,MaybeString,Integer)
+       , getItemEnclosure         -- :: ItemGetter (String,Maybe String,Integer)
        , getItemFeedLink          -- :: ItemGetter (URLString)
        , getItemId                -- :: ItemGetter (Bool,String)
        , getItemCategories        -- :: ItemGetter [String]
        , getItemRights            -- :: ItemGetter String
+       , getItemSummary           -- :: ItemGetter String
+       , getItemDescription       -- :: ItemGetter String (synonym of previous.)
 
        ) where
 
@@ -318,7 +320,7 @@ getItemCommentLink it =
   isReplies lr = toStr (Atom.linkRel lr) == "replies"
   isRel dc = dcElt dc == DC_Relation
 
-getItemEnclosure   :: ItemGetter (String,Maybe String,Integer)
+getItemEnclosure   :: ItemGetter (String, Maybe String, Integer)
 getItemEnclosure it = 
   case it of
     Feed.AtomItem e ->
@@ -404,6 +406,17 @@ getItemRights it =
     Feed.XMLItem _ -> Nothing
  where
   isRights dc = dcElt dc == DC_Rights
+
+getItemSummary      :: ItemGetter String
+getItemSummary it = getItemDescription it
+
+getItemDescription :: ItemGetter String
+getItemDescription it = 
+  case it of
+    Feed.AtomItem e -> fmap contentToStr $ Atom.entrySummary e
+    Feed.RSSItem  e -> RSS.rssItemDescription e
+    Feed.RSS1Item i -> itemDesc i
+    Feed.XMLItem _  -> Nothing
 
  -- strip away
 toStr :: Maybe (Either String String) -> String
