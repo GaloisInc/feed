@@ -12,7 +12,8 @@
 
 module Text.Atom.Feed.Import where
 
-import Data.Maybe (listToMaybe, mapMaybe)
+import Data.Maybe (listToMaybe, mapMaybe, isJust)
+import Data.List  (find)
 import Control.Monad (guard)
 
 import Text.Atom.Feed
@@ -38,7 +39,10 @@ pQLeaf        :: QName -> [XML.Element] -> Maybe String
 pQLeaf x es    = strContent `fmap` pQNode x es
 
 pAttr        :: String -> XML.Element -> Maybe String
-pAttr x e     = lookup (atomName x) [ (k,v) | Attr k v <- elAttribs e ]
+pAttr x e     = fmap snd $ find sameAttr [ (k,v) | Attr k v <- elAttribs e ]
+  where
+    ax = atomName x
+    sameAttr (k,_) = k == ax ||  (not (isJust (qURI k)) && qName k == x)
 
 pAttrs       :: String -> XML.Element -> [String]
 pAttrs x e    = [ v | Attr k v <- elAttribs e, k == atomName x ]
