@@ -5,8 +5,8 @@ License-file:       LICENSE
 Category:           Text
 Synopsis:           Interfacing with RSS (v 0.9x, 2.x, 1.0) + Atom feeds.
 Description:        Interfacing with RSS (v 0.9x, 2.x, 1.0) + Atom feeds.
-Author:             Sigbjorn Finne <sof@galois.com>
-Maintainer:         Sigbjorn Finne <sof@galois.com>
+Author:             Sigbjorn Finne <sof@forkIO.com>
+Maintainer:         Sigbjorn Finne <sof@forkIO.com>
 Extra-Source-Files: tests/Main.hs tests/rss20.xml CHANGES
 Cabal-version:   >= 1.2
 build-type: Simple
@@ -39,5 +39,5 @@ library
                      Text.Feed.Translate
                      Text.Feed.Util
     Ghc-Options:     -Wall
-    Build-Depends:   base, haskell98, xml >= 1.2.6, utf8-string
+    Build-Depends:   base >= 2 && < 4, haskell98, xml >= 1.2.6, utf8-string
 
