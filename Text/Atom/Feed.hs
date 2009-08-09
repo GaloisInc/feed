@@ -110,6 +110,11 @@ data TextContent
  | XHTMLString XML.Element
      deriving (Show)
 
+txtToString :: TextContent -> String
+txtToString (TextString s) = s
+txtToString (HTMLString s) = s
+txtToString (XHTMLString x) = show x
+
 data Source
  = Source
       { sourceAuthors     :: [Person]
