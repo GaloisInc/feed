@@ -1,5 +1,5 @@
 Name:               feed
-Version:            0.3.6
+Version:            0.3.7
 License:            BSD3
 License-file:       LICENSE
 Category:           Text
@@ -7,7 +7,7 @@ Synopsis:           Interfacing with RSS (v 0.9x, 2.x, 1.0) + Atom feeds.
 Description:        Interfacing with RSS (v 0.9x, 2.x, 1.0) + Atom feeds.
 Author:             Sigbjorn Finne <sof@galois.com>
 Maintainer:         Sigbjorn Finne <sof@galois.com>
-Extra-Source-Files: tests/Main.hs tests/rss20.xml
+Extra-Source-Files: tests/Main.hs tests/rss20.xml CHANGES
 Cabal-version:   >= 1.2
 build-type: Simple
 
