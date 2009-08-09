@@ -14,7 +14,7 @@ module Text.Atom.Feed.Import where
 
 import Data.Maybe (listToMaybe, mapMaybe, isJust)
 import Data.List  (find)
-import Control.Monad (guard)
+import Control.Monad (guard,mplus)
 
 import Text.Atom.Feed
 import Text.Atom.Feed.Export (atomName, atomThreadName)
@@ -61,7 +61,7 @@ elementFeed e =
   do guard (elName e == atomName "feed")
      let es = children e
      i <- pLeaf "id" es
-     t <- pTextContent "title" es
+     t <- pTextContent "title" es `mplus` return (TextString "<no-title>")
      u <- pLeaf "updated" es
      return Feed
        { feedId           = i
@@ -189,7 +189,7 @@ pEntry e =
   do let es = children e
      i <- pLeaf "id" es
      t <- pTextContent "title" es
-     u <- pLeaf "updated" es
+     u <- pLeaf "updated" es `mplus` pLeaf "published" es
      return Entry
        { entryId           = i
        , entryTitle        = t
